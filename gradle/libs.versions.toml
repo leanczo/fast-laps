@@ -8,6 +8,8 @@ composeFoundation = "1.2.1"
 wearToolingPreview = "1.0.0"
 activityCompose = "1.10.1"
 coreSplashscreen = "1.0.1"
+retrofit = "2.9.0"
+okhttpLogging = "4.12.0"
 
 [libraries]
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
@@ -23,6 +25,9 @@ compose-foundation = { group = "androidx.wear.compose", name = "compose-foundati
 wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLogging" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
