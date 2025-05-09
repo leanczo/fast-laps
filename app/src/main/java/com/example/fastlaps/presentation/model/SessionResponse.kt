@@ -13,6 +13,3 @@ data class Session(
     val circuit_short_name: String
 )
 
-data class SessionsResponse(
-    val sessions: List<Session>
-)
