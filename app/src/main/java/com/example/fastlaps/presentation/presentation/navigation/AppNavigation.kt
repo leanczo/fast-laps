@@ -20,8 +20,7 @@ fun AppNavigation(viewModel: RaceViewModel) {
                 viewModel = viewModel,
                 onSessionClick = { sessionKey ->
                     // 1. **Call loadSessionResults with the sessionKey**
-                    viewModel.loadSessionResults(sessionKey)
-                    // 2. Navigate to the results screen
+                    viewModel.loadSessionData(sessionKey)
                     navController.navigate("sessionResults/$sessionKey") {
                         // Optional: Configure navigation options
                     }

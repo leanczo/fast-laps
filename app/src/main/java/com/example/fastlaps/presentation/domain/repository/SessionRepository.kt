@@ -1,5 +1,6 @@
 package com.example.fastlaps.presentation.domain.repository
 
+import com.example.fastlaps.presentation.model.Driver
 import com.example.fastlaps.presentation.model.FinalPosition
 import com.example.fastlaps.presentation.model.PositionData
 import com.example.fastlaps.presentation.model.Session
@@ -16,14 +17,24 @@ class SessionRepository {
         return api.getSessionPositions(sessionKey)
     }
 
-    fun processFinalPositions(positions: List<PositionData>): List<FinalPosition> {
+    suspend fun getSessionDrivers(sessionKey: Int): List<Driver> {
+        return api.getSessionDrivers(sessionKey)
+    }
+
+    fun processFinalPositions(
+        positions: List<PositionData>,
+        drivers: List<Driver> = emptyList() // Parámetro opcional para drivers
+    ): List<FinalPosition> {
         return positions.groupBy { it.driver_number }
             .map { (driverNumber, positions) ->
                 val lastPosition = positions.maxByOrNull { it.date }
+                val driver = drivers.find { it.driver_number == driverNumber }
+
                 FinalPosition(
                     driverNumber = driverNumber,
                     position = lastPosition?.position ?: 0,
-                    timestamp = lastPosition?.date ?: ""
+                    timestamp = lastPosition?.date ?: "",
+                    driverInfo = driver
                 )
             }
             .sortedBy { it.position }

@@ -36,43 +36,55 @@ fun SessionListScreen(
     ) {
         if (sessions.isEmpty()) {
             Box(
-                modifier = Modifier.fillMaxSize(), // Make this Box fill the parent Box
-                contentAlignment = Alignment.Center // Center its content
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
                 Text("Cargando...", color = MaterialTheme.colors.primary)
             }
         } else {
             ScalingLazyColumn {
-                // Iterate directly over the map entries to define items
                 sessions.entries.forEach { (meetingKey, sessionList) ->
-                    // Define an item for the meeting button
-                    item(key = meetingKey) { // Provide a stable key for the meeting item
+                    item(key = meetingKey) {
                         val circuitName = sessionList.first().circuit_short_name
                         val countryName = sessionList.first().country_name
                         Button(
                             onClick = { viewModel.toggleMeetingSessions(meetingKey) },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = MaterialTheme.colors.primary,
+                                contentColor = MaterialTheme.colors.onPrimary
+                            ),
+                            shape = MaterialTheme.shapes.medium
                         ) {
-                            Text("$circuitName, $countryName")
+                            Text(
+                                text = "$circuitName, $countryName",
+                                style = MaterialTheme.typography.body2
+                            )
                         }
                     }
 
-                    // If the meeting is expanded, define items for the sessions
                     if (expandedMeetingKey == meetingKey) {
                         items(
-                            items = sessionList, // The list of sessions
-                            key = { it.session_key } // Provide a stable key for each session
-                        ) { session -> // The individual session object
+                            items = sessionList,
+                            key = { it.session_key }
+                        ) { session ->
                             Button(
                                 onClick = { onSessionClick(session.session_key) },
-                                  colors = ButtonDefaults.buttonColors(
-                                      backgroundColor = MaterialTheme.colors.secondary
-                                    ),
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = MaterialTheme.colors.secondary,
+                                    contentColor = MaterialTheme.colors.onSecondary
+                                ),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(start = 16.dp)
+                                    .padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
+                                shape = MaterialTheme.shapes.small
                             ) {
-                                Text(session.session_name)
+                                Text(
+                                    text = session.session_name,
+                                    style = MaterialTheme.typography.body2
+                                )
                             }
                         }
                     }
