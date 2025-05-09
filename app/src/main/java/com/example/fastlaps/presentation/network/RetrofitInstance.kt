@@ -11,14 +11,14 @@ object RetrofitInstance {
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         })
-        .connectionSpecs(listOf(ConnectionSpec.CLEARTEXT))
+        .connectionSpecs(listOf(ConnectionSpec.MODERN_TLS, ConnectionSpec.COMPATIBLE_TLS))
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://ergast.com/")
+        .baseUrl("https://api.openf1.org/")
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val api: ErgastApiService = retrofit.create(ErgastApiService::class.java)
+    val api: OpenF1ApiService = retrofit.create(OpenF1ApiService::class.java)
 }
