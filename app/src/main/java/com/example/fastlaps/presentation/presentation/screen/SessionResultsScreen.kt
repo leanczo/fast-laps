@@ -56,7 +56,10 @@ fun SessionResultsScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
-                contentPadding = PaddingValues(8.dp)
+                 contentPadding = PaddingValues(
+                    horizontal = 8.dp,
+                    vertical = 16.dp // Or the desired top/bottom padding
+                )
             ) {
                 items(finalPositions) { position ->
                     DriverPositionItem(

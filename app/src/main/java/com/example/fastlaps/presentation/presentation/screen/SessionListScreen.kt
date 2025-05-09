@@ -8,10 +8,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.model.Session
@@ -33,7 +35,12 @@ fun SessionListScreen(
         contentAlignment = Alignment.TopCenter
     ) {
         if (sessions.isEmpty()) {
-            Text("Cargando...", color = MaterialTheme.colors.primary)
+            Box(
+                modifier = Modifier.fillMaxSize(), // Make this Box fill the parent Box
+                contentAlignment = Alignment.Center // Center its content
+            ) {
+                Text("Cargando...", color = MaterialTheme.colors.primary)
+            }
         } else {
             ScalingLazyColumn {
                 // Iterate directly over the map entries to define items
@@ -58,6 +65,9 @@ fun SessionListScreen(
                         ) { session -> // The individual session object
                             Button(
                                 onClick = { onSessionClick(session.session_key) },
+                                  colors = ButtonDefaults.buttonColors(
+                                      backgroundColor = MaterialTheme.colors.secondary
+                                    ),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(start = 16.dp)

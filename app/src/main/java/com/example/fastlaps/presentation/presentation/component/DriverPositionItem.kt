@@ -22,15 +22,13 @@ fun DriverPositionItem(position: FinalPosition) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(horizontal = 4.dp, vertical = 4.dp),
         // Replace TODO() with a lambda that logs the click
         onClick = {
-
-
         },
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
