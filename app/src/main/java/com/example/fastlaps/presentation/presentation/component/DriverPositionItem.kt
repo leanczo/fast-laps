@@ -40,14 +40,14 @@ fun DriverPositionItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp), // Armoniza el padding
+            .padding(horizontal = 4.dp, vertical = 4.dp), // Armoniza el padding
         contentColor = MaterialTheme.colors.onSurface, // Contraste adecuado para texto
         onClick = { /* Acción al hacer clic */ }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(2.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {

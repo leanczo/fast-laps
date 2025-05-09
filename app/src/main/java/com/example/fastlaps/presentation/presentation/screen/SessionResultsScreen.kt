@@ -53,15 +53,29 @@ fun SessionResultsScreen(
                 }
             }
         } else {
-            ScalingLazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp)
+            Column(
+                modifier = Modifier.fillMaxSize()
             ) {
-                items(finalPositions) { position ->
-                    DriverPositionItem(
-                        position = position,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                // Título centrado
+                Text(
+                    text = "Positions", // o el título que prefieras
+                    style = MaterialTheme.typography.body2,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    textAlign = TextAlign.Center
+                )
+
+                ScalingLazyColumn(
+                    modifier = Modifier.weight(1f), // Ocupa todo el espacio restante
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp)
+                ) {
+                    items(finalPositions) { position ->
+                        DriverPositionItem(
+                            position = position,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
         }
