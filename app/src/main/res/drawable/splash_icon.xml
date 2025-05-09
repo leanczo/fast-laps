@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Fondo circular blanco -->
     <item
         android:width="48dp"
         android:height="48dp"
@@ -9,19 +9,116 @@
             <solid android:color="#FFFFFF" />
         </shape>
     </item>
+
+    <!-- Cuadrícula de cuadros blancos y negros -->
     <item
-        android:width="40dp"
-        android:height="40dp"
+        android:width="48dp"
+        android:height="48dp"
         android:gravity="center">
         <vector
-            android:width="24dp"
-            android:height="24dp"
-            android:tint="#000000"
-            android:viewportWidth="24"
-            android:viewportHeight="24">
-            <path
-                android:fillColor="#FF000000"
-                android:pathData="M17.6,11.48 L19.44,8.3a0.63,0.63 0,0 0,-1.09 -0.63l-1.88,3.24a11.43,11.43 0,0 0,-8.94 0L5.65,7.67a0.63,0.63 0,0 0,-1.09 0.63L6.4,11.48A10.81,10.81 0,0 0,1 20L23,20A10.81,10.81 0,0 0,17.6 11.48ZM7,17.25A1.25,1.25 0,1 1,8.25 16,1.25 1.25,0 0,1 7,17.25ZM17,17.25A1.25,1.25 0,1 1,18.25 16,1.25 1.25,0 0,1 17,17.25Z" />
+            android:width="48dp"
+            android:height="48dp"
+            android:viewportWidth="48"
+            android:viewportHeight="48">
+            <group>
+                <!-- Fila 1 -->
+                <path android:fillColor="#000000" android:pathData="M0,0h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M8,0h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M16,0h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M24,0h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M32,0h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M40,0h4v4h-4z" />
+
+                <!-- Fila 2 -->
+                <path android:fillColor="#000000" android:pathData="M4,4h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M12,4h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M20,4h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M28,4h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M36,4h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M44,4h4v4h-4z" />
+
+                <!-- Fila 3 -->
+                <path android:fillColor="#000000" android:pathData="M0,8h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M8,8h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M16,8h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M24,8h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M32,8h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M40,8h4v4h-4z" />
+
+                <!-- Fila 4 -->
+                <path android:fillColor="#000000" android:pathData="M4,12h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M12,12h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M20,12h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M28,12h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M36,12h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M44,12h4v4h-4z" />
+
+                <!-- Fila 5 -->
+                <path android:fillColor="#000000" android:pathData="M0,16h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M8,16h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M16,16h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M24,16h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M32,16h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M40,16h4v4h-4z" />
+
+                <!-- Fila 6 -->
+                <path android:fillColor="#000000" android:pathData="M4,20h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M12,20h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M20,20h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M28,20h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M36,20h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M44,20h4v4h-4z" />
+
+                <!-- Fila 7 -->
+                <path android:fillColor="#000000" android:pathData="M0,24h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M8,24h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M16,24h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M24,24h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M32,24h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M40,24h4v4h-4z" />
+
+                <!-- Fila 8 -->
+                <path android:fillColor="#000000" android:pathData="M4,28h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M12,28h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M20,28h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M28,28h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M36,28h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M44,28h4v4h-4z" />
+
+                  <!-- Fila 9 -->
+                <path android:fillColor="#000000" android:pathData="M0,32h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M8,32h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M16,32h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M24,32h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M32,32h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M40,32h4v4h-4z" />
+
+                <!-- Fila 10 -->
+                <path android:fillColor="#000000" android:pathData="M4,36h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M12,36h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M20,36h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M28,36h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M36,36h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M44,36h4v4h-4z" />
+
+                <!-- Fila 11 -->
+                <path android:fillColor="#000000" android:pathData="M0,40h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M8,40h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M16,40h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M24,40h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M32,40h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M40,40h4v4h-4z" />
+
+                <!-- Fila 12 -->
+                <path android:fillColor="#000000" android:pathData="M4,44h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M12,44h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M20,44h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M28,44h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M36,44h4v4h-4z" />
+                <path android:fillColor="#000000" android:pathData="M44,44h4v4h-4z" />
+
+                <!-- Añade más filas si necesitas un patrón más extenso -->
+            </group>
         </vector>
     </item>
 </layer-list>
