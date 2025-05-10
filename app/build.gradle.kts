@@ -5,16 +5,17 @@ plugins {
 }
 
 android {
-    namespace = "com.example.fastlaps"
+    namespace = "com.leandro.fastlaps"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.fastlaps"
+        applicationId = "com.leandro.fastlaps"
         minSdk = 30
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
+        wearAppUnbundled=true
     }
 
     buildTypes {
@@ -59,4 +60,5 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+
 }

@@ -23,16 +23,28 @@ import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.model.FinalPosition
 import com.example.fastlaps.presentation.presentation.component.DriverPositionItem
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.DisposableEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.material.ButtonDefaults
+import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 
 @Composable
 fun SessionResultsScreen(
     finalPositions: List<FinalPosition>,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModel: RaceViewModel
 ) {
+
+    DisposableEffect(Unit) {
+        onDispose {
+            // Esto se ejecutará cuando el composable se desmonte
+            viewModel.resetSessionResults()
+        }
+    }
+
     Scaffold {
         if (finalPositions.isEmpty()) {
             Column(
@@ -40,17 +52,7 @@ fun SessionResultsScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Cargando resultados...", color = MaterialTheme.colors.primary)
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = onBack,
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = MaterialTheme.colors.primary,
-                        contentColor = MaterialTheme.colors.onPrimary
-                    )
-                ) {
-                    Text("Volver")
-                }
+                Text("Loading...", color = MaterialTheme.colors.primary)
             }
         } else {
             Column(
@@ -61,8 +63,8 @@ fun SessionResultsScreen(
                     text = "Positions", // o el título que prefieras
                     style = MaterialTheme.typography.body2,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                        .fillMaxWidth() // <-- También aplicable aquí
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     textAlign = TextAlign.Center
                 )
 
@@ -75,6 +77,29 @@ fun SessionResultsScreen(
                             position = position,
                             modifier = Modifier.fillMaxWidth()
                         )
+                    }
+
+                    // Footer con información de la app y desarrollador
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "v1.0.0", // Cambia esto por tu versión actual
+                                style = MaterialTheme.typography.caption3,
+                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
+                            )
+                            Text(
+                                text = "© 2025 Leandro Cardozo", // Reemplaza con tu nombre
+                                style = MaterialTheme.typography.caption3,
+                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
+                            )
+                        }
                     }
                 }
             }

@@ -33,14 +33,9 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
 
                 _drivers.value = drivers
 
-                // Procesar posiciones y combinar con info de pilotos
-                val processedPositions = repository.processFinalPositions(positions).map { position ->
-                    position.copy(
-                        driverInfo = drivers.find { it.driver_number == position.driverNumber }
-                    )
-                }
+                // Procesar posiciones una sola vez con toda la información
+                _finalPositions.value = repository.processFinalPositions(positions, drivers)
 
-                _finalPositions.value = processedPositions
             } catch (e: Exception) {
                 Log.e("RaceViewModel", "Error loading session data", e)
                 _finalPositions.value = emptyList()
@@ -74,6 +69,10 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
         } else {
             meetingKey
         }
+    }
+
+    fun resetSessionResults() {
+        _finalPositions.value = emptyList()
     }
 
     init {

@@ -40,7 +40,8 @@ fun AppNavigation(viewModel: RaceViewModel) {
 
             SessionResultsScreen(
                 finalPositions = finalPositions,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                viewModel
             )
         }
     }

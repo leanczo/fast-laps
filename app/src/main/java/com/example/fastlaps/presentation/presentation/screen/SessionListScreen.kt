@@ -1,8 +1,11 @@
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,6 +25,7 @@ import com.example.fastlaps.presentation.model.Session
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import kotlinx.coroutines.flow.StateFlow
 
+
 @Composable
 fun SessionListScreen(
     viewModel: RaceViewModel,
@@ -37,11 +41,13 @@ fun SessionListScreen(
         contentAlignment = Alignment.TopCenter
     ) {
         if (sessions.isEmpty()) {
+            // You might want to center this "Loading..." text.
+            // See previous explanation on how to center content in a Box.
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center // Centering the loading text
             ) {
-                Text("Cargando...", color = MaterialTheme.colors.primary)
+                Text("Loading...", color = MaterialTheme.colors.primary)
             }
         } else {
             Column(
@@ -51,14 +57,14 @@ fun SessionListScreen(
                 Text(
                     text = "Circuits",
                     style = MaterialTheme.typography.title3,
-                    textAlign = TextAlign.Center, // Solo funciona si el padre tiene ancho definido
+                    textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .fillMaxWidth() // <-- También aplicable aquí
+                        .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
 
                 ScalingLazyColumn {
-                    sessions.entries.forEach { (meetingKey, sessionList) ->
+                    sessions.entries.reversed().forEach { (meetingKey, sessionList) ->
                         item(key = meetingKey) {
                             val circuitName = sessionList.first().circuit_short_name
                             val countryName = sessionList.first().country_name
@@ -69,7 +75,7 @@ fun SessionListScreen(
                                     .padding(vertical = 4.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     backgroundColor = MaterialTheme.colors.surface,
-                                    contentColor = Color(0xFFFFFFFF),
+                                    contentColor = Color(0xFFFFFFFF), // Consider using onSurface from your theme
                                 ),
                                 shape = MaterialTheme.shapes.small
                             ) {
@@ -102,6 +108,30 @@ fun SessionListScreen(
                                     )
                                 }
                             }
+                        }
+                    }
+
+                    // Add the footer as a new item block here
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Spacer(modifier = Modifier.height(16.dp)) // Add some space above the footer content
+                            Text(
+                                text = "v1.0.0", // Cambia esto por tu versión actual
+                                style = MaterialTheme.typography.caption3,
+                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
+                            )
+                            Text(
+                                text = "© 2025 Leandro Cardozo", // Reemplaza con tu nombre
+                                style = MaterialTheme.typography.caption3,
+                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
+                            )
+                            Spacer(modifier = Modifier.height(16.dp)) // Add some space below the footer if needed
                         }
                     }
                 }
