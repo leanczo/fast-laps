@@ -122,7 +122,7 @@ fun SessionListScreen(
                         ) {
                             Spacer(modifier = Modifier.height(16.dp)) // Add some space above the footer content
                             Text(
-                                text = "v1.0.0", // Cambia esto por tu versión actual
+                                text = "v1.4", // Cambia esto por tu versión actual
                                 style = MaterialTheme.typography.caption3,
                                 color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
                             )
