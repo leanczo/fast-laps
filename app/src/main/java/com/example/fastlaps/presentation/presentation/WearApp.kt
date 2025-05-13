@@ -18,10 +18,8 @@ fun WearApp() {
         factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(
                 modelClass: Class<T>,
-                extras: CreationExtras // Añade este parámetro
+                extras: CreationExtras
             ): T {
-                // Aquí puedes añadir lógica para crear diferentes ViewModels si es necesario
-                // o usar 'extras' si tu ViewModel lo requiere (por ejemplo, SavedStateHandle)
                 if (modelClass.isAssignableFrom(RaceViewModel::class.java)) {
                     @Suppress("UNCHECKED_CAST")
                     return RaceViewModel(SessionRepository()) as T

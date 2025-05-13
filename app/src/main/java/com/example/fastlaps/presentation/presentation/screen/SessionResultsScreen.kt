@@ -1,6 +1,5 @@
 package com.example.fastlaps.presentation.presentation.screen
 
-import android.R.attr.onClick
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,27 +8,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.model.FinalPosition
 import com.example.fastlaps.presentation.presentation.component.DriverPositionItem
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.DisposableEffect
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.compose.ui.res.stringResource
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
-import androidx.wear.compose.material.ButtonDefaults
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
+import com.leandro.fastlaps.R
 
 @Composable
 fun SessionResultsScreen(
@@ -40,7 +34,6 @@ fun SessionResultsScreen(
 
     DisposableEffect(Unit) {
         onDispose {
-            // Esto se ejecutará cuando el composable se desmonte
             viewModel.resetSessionResults()
         }
     }
@@ -58,18 +51,17 @@ fun SessionResultsScreen(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Título centrado
                 Text(
-                    text = "Positions", // o el título que prefieras
+                    text = "Positions",
                     style = MaterialTheme.typography.body2,
                     modifier = Modifier
-                        .fillMaxWidth() // <-- También aplicable aquí
+                        .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     textAlign = TextAlign.Center
                 )
 
                 ScalingLazyColumn(
-                    modifier = Modifier.weight(1f), // Ocupa todo el espacio restante
+                    modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp)
                 ) {
                     items(finalPositions) { position ->
@@ -79,7 +71,7 @@ fun SessionResultsScreen(
                         )
                     }
 
-                    // Footer con información de la app y desarrollador
+                    // Footer
                     item {
                         Column(
                             modifier = Modifier
@@ -90,12 +82,12 @@ fun SessionResultsScreen(
                         ) {
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "v1.4", // Cambia esto por tu versión actual
+                                text = stringResource(id = R.string.app_version),
                                 style = MaterialTheme.typography.caption3,
                                 color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
                             )
                             Text(
-                                text = "© 2025 Leandro Cardozo", // Reemplaza con tu nombre
+                                text = stringResource(id = R.string.copyright),
                                 style = MaterialTheme.typography.caption3,
                                 color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
                             )

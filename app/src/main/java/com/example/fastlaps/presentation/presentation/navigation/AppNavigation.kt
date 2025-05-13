@@ -19,10 +19,8 @@ fun AppNavigation(viewModel: RaceViewModel) {
             SessionListScreen(
                 viewModel = viewModel,
                 onSessionClick = { sessionKey ->
-                    // 1. **Call loadSessionResults with the sessionKey**
                     viewModel.loadSessionData(sessionKey)
                     navController.navigate("sessionResults/$sessionKey") {
-                        // Optional: Configure navigation options
                     }
                 }
             )
@@ -31,11 +29,7 @@ fun AppNavigation(viewModel: RaceViewModel) {
             route = "sessionResults/{sessionKey}",
             arguments = listOf(navArgument("sessionKey") { type = NavType.IntType })
         ) { backStackEntry ->
-            // You can optionally retrieve the sessionKey here if needed for the screen,
-            // but the ViewModel should already be loading based on the click.
             val sessionKey = backStackEntry.arguments?.getInt("sessionKey")
-
-            // Collect the final positions from the ViewModel
             val finalPositions by viewModel.finalPositions.collectAsState()
 
             SessionResultsScreen(

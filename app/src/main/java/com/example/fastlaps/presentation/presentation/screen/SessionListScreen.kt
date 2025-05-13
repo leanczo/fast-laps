@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -23,7 +24,7 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.model.Session
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
-import kotlinx.coroutines.flow.StateFlow
+import com.leandro.fastlaps.R
 
 
 @Composable
@@ -41,11 +42,9 @@ fun SessionListScreen(
         contentAlignment = Alignment.TopCenter
     ) {
         if (sessions.isEmpty()) {
-            // You might want to center this "Loading..." text.
-            // See previous explanation on how to center content in a Box.
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center // Centering the loading text
+                contentAlignment = Alignment.Center
             ) {
                 Text("Loading...", color = MaterialTheme.colors.primary)
             }
@@ -53,10 +52,9 @@ fun SessionListScreen(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Título "Circuits"
                 Text(
                     text = "Circuits",
-                    style = MaterialTheme.typography.title3,
+                    style = MaterialTheme.typography.body2,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -75,7 +73,7 @@ fun SessionListScreen(
                                     .padding(vertical = 4.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     backgroundColor = MaterialTheme.colors.surface,
-                                    contentColor = Color(0xFFFFFFFF), // Consider using onSurface from your theme
+                                    contentColor = Color(0xFFFFFFFF),
                                 ),
                                 shape = MaterialTheme.shapes.small
                             ) {
@@ -111,7 +109,7 @@ fun SessionListScreen(
                         }
                     }
 
-                    // Add the footer as a new item block here
+                    // Footer
                     item {
                         Column(
                             modifier = Modifier
@@ -120,18 +118,18 @@ fun SessionListScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            Spacer(modifier = Modifier.height(16.dp)) // Add some space above the footer content
+                            Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "v1.4", // Cambia esto por tu versión actual
+                                text = stringResource(id = R.string.app_version),
                                 style = MaterialTheme.typography.caption3,
                                 color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
                             )
                             Text(
-                                text = "© 2025 Leandro Cardozo", // Reemplaza con tu nombre
+                                text = stringResource(id = R.string.copyright),
                                 style = MaterialTheme.typography.caption3,
                                 color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
                             )
-                            Spacer(modifier = Modifier.height(16.dp)) // Add some space below the footer if needed
+                            Spacer(modifier = Modifier.height(16.dp))
                         }
                     }
                 }

@@ -25,20 +25,19 @@ fun DriverPositionItem(
 ) {
     val driverInfo = position.driverInfo
 
-    // Color basado en la posición
     val positionColor = when (position.position) {
-        1 -> Color(0xFFFFD700) // Oro
-        2 -> Color(0xFFC0C0C0) // Plata
-        3 -> Color(0xFFCD7F32) // Bronce
-        else -> MaterialTheme.colors.primary // Usa el color principal para otros
+        1 -> Color(0xFFFFD700)
+        2 -> Color(0xFFC0C0C0)
+        3 -> Color(0xFFCD7F32)
+        else -> MaterialTheme.colors.primary
     }
 
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 4.dp), // Armoniza el padding
-        contentColor = MaterialTheme.colors.onSurface, // Contraste adecuado para texto
-        onClick = { /* Acción al hacer clic */ }
+            .padding(horizontal = 4.dp, vertical = 4.dp),
+        contentColor = MaterialTheme.colors.onSurface,
+        onClick = {  }
     ) {
         Row(
             modifier = Modifier
@@ -47,7 +46,6 @@ fun DriverPositionItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Posición
             Text(
                 text = "#${position.position}",
                 style = MaterialTheme.typography.body1,
@@ -55,7 +53,6 @@ fun DriverPositionItem(
                 color = positionColor
             )
 
-            // Nombre del piloto y equipo
             Column(
                 modifier = Modifier.weight(1f).padding(start = 8.dp)
             ) {
