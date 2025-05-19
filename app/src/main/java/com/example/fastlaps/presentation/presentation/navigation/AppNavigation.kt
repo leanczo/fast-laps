@@ -14,28 +14,40 @@ import androidx.compose.runtime.getValue
 fun AppNavigation(viewModel: RaceViewModel) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "sessionList") {
+    NavHost(navController = navController, startDestination = "mainScreen") {
+        composable("mainScreen") {
+            MainScreen(
+                onCircuitsClick = { navController.navigate("sessionList") },
+                onAboutClick = { navController.navigate("about") }
+            )
+        }
+
+        composable("about") {
+            AboutScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
         composable("sessionList") {
             SessionListScreen(
                 viewModel = viewModel,
                 onSessionClick = { sessionKey ->
                     viewModel.loadSessionData(sessionKey)
-                    navController.navigate("sessionResults/$sessionKey") {
-                    }
-                }
+                    navController.navigate("sessionResults/$sessionKey")
+                },
+                onBack = { navController.popBackStack() }
             )
         }
+
         composable(
             route = "sessionResults/{sessionKey}",
             arguments = listOf(navArgument("sessionKey") { type = NavType.IntType })
         ) { backStackEntry ->
-            val sessionKey = backStackEntry.arguments?.getInt("sessionKey")
             val finalPositions by viewModel.finalPositions.collectAsState()
-
             SessionResultsScreen(
                 finalPositions = finalPositions,
                 onBack = { navController.popBackStack() },
-                viewModel
+                viewModel = viewModel
             )
         }
     }

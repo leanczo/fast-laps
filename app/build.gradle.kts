@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.navigation.compose)
     implementation(libs.compose.runtime)
+    implementation(libs.material.icons.core)
+    implementation(libs.material.icons.extended)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)

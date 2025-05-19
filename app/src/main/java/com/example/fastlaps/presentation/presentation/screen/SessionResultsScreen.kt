@@ -70,29 +70,6 @@ fun SessionResultsScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
-
-                    // Footer
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                text = stringResource(id = R.string.app_version),
-                                style = MaterialTheme.typography.caption3,
-                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
-                            )
-                            Text(
-                                text = stringResource(id = R.string.copyright),
-                                style = MaterialTheme.typography.caption3,
-                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.6f)
-                            )
-                        }
-                    }
                 }
             }
         }
