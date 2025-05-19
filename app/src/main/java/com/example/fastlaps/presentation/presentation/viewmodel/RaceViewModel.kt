@@ -21,6 +21,12 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
     private val _drivers = MutableStateFlow<List<Driver>>(emptyList())
     val drivers: StateFlow<List<Driver>> = _drivers.asStateFlow()
 
+    private val _errorState = MutableStateFlow<String?>(null)
+    val errorState: StateFlow<String?> = _errorState.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
     fun loadSessionData(sessionKey: Int) {
         viewModelScope.launch {
             try {
@@ -43,6 +49,30 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
         }
     }
 
+    // Función mejorada para cargar sesiones
+    fun loadSessions(year: Int = 2025) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                _errorState.value = null
+
+                val response = repository.getSessions(year)
+                _sessions.value = response.groupBy { it.meeting_key }
+
+            } catch (e: Exception) {
+                _errorState.value = when (e) {
+                    is java.net.UnknownHostException -> "No internet connection"
+                    is java.net.SocketTimeoutException -> "Connection timeout"
+                    else -> "Failed to load sessions: ${e.localizedMessage}"
+                }
+                Log.e("RaceViewModel", "Error fetching sessions", e)
+                _sessions.value = emptyMap()
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
     // 1. Definición correcta de StateFlows
     private val _sessions = MutableStateFlow<Map<Int, List<Session>>>(emptyMap())
     val sessions: StateFlow<Map<Int, List<Session>>> = _sessions.asStateFlow()
@@ -60,6 +90,10 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
                 Log.e("RaceViewModel", "Error fetching sessions", e)
             }
         }
+    }
+
+    fun retryLoading() {
+        loadSessions()
     }
 
     // 3. Función para expandir/contraer sesiones

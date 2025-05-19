@@ -1,9 +1,16 @@
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,9 +23,9 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
+import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
-import com.example.fastlaps.presentation.model.Session
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 
 @Composable
@@ -27,8 +34,10 @@ fun SessionListScreen(
     onSessionClick: (Int) -> Unit,
     onBack: () -> Unit,
 ) {
-    val sessions: Map<Int, List<Session>> by viewModel.sessions.collectAsState()
-    val expandedMeetingKey: Int? by viewModel.expandedMeetingKey.collectAsState()
+    val sessions by viewModel.sessions.collectAsState()
+    val expandedMeetingKey by viewModel.expandedMeetingKey.collectAsState()
+    val errorState by viewModel.errorState.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     Box(
         modifier = Modifier
@@ -36,17 +45,48 @@ fun SessionListScreen(
             .background(MaterialTheme.colors.background),
         contentAlignment = Alignment.TopCenter
     ) {
-        if (sessions.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Loading...", color = MaterialTheme.colors.primary)
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            if (errorState != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = errorState ?: "Connection error",
+                            color = MaterialTheme.colors.error,
+                            style = MaterialTheme.typography.caption2,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                        RefreshButton(
+                            isLoading = isLoading,
+                            onClick = { viewModel.loadSessions() },
+                            isErrorState = true
+                        )
+                    }
+                }
             }
-        } else {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+
+            if (sessions.isEmpty() && errorState == null) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isLoading) {
+                        RefreshButton(
+                            isLoading = true,
+                            onClick = {},
+                            isErrorState = false
+                        )
+                    } else {
+                        Text("Loading...", color = MaterialTheme.colors.primary)
+                    }
+                }
+            } else if (sessions.isNotEmpty()) {
                 Text(
                     text = "Circuits",
                     style = MaterialTheme.typography.body2,
@@ -57,6 +97,20 @@ fun SessionListScreen(
                 )
 
                 ScalingLazyColumn {
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            RefreshButton(
+                                isLoading = isLoading,
+                                onClick = { viewModel.loadSessions() },
+                                isErrorState = false
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
+                    }
+
                     sessions.entries.reversed().forEach { (meetingKey, sessionList) ->
                         item(key = meetingKey) {
                             val circuitName = sessionList.first().circuit_short_name

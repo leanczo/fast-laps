@@ -50,7 +50,10 @@ fun MainScreen(
                             modifier = Modifier.size(20.dp)
                         )
                     },
-                    colors = ChipDefaults.primaryChipColors(),
+                    colors = ChipDefaults.chipColors(
+                        backgroundColor = MaterialTheme.colors.secondary,
+                        contentColor = MaterialTheme.colors.onSecondary
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp, vertical = 6.dp),
