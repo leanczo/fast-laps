@@ -21,7 +21,7 @@ import androidx.wear.compose.material.Text
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.res.stringResource
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
-import com.leandro.fastlaps.R
+import com.fastlaps.R
 
 @Composable
 fun MainScreen(

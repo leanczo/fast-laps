@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.leandro.fastlaps"
+    namespace = "com.fastlaps"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.leandro.fastlaps"
+        applicationId = "com.fastlaps"
         minSdk = 30
         targetSdk = 35
         versionCode = 5
