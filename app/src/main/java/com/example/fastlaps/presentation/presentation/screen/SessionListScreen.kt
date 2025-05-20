@@ -1,12 +1,9 @@
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,119 +35,95 @@ fun SessionListScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background),
-        contentAlignment = Alignment.TopCenter
+        contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if (errorState != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = errorState ?: "Connection error",
-                            color = MaterialTheme.colors.error,
-                            style = MaterialTheme.typography.caption2,
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                        RefreshButton(
-                            isLoading = isLoading,
-                            onClick = { viewModel.loadSessions() },
-                            isErrorState = true,
-                            modifier = Modifier.size(8.dp),
-                        )
-                    }
-                }
+        when {
+            isLoading -> {
+                LoadingIndicator()
             }
 
-            if (sessions.isEmpty() && errorState == null) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (isLoading) {
-                        RefreshButton(
-                            isLoading = true,
-                            onClick = {},
-                            isErrorState = false
-                        )
-                    } else {
-                        Text("Loading...", color = MaterialTheme.colors.primary)
-                    }
-                }
-            } else if (sessions.isNotEmpty()) {
-                Text(
-                    text = "Circuits",
-                    style = MaterialTheme.typography.body2,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+            errorState != null -> {
+                ErrorMessage(
+                    errorState = errorState,
+                    onRetry = { viewModel.loadSessions() }
                 )
+            }
 
-                ScalingLazyColumn {
+            sessions.isEmpty() -> {
+                EmptyState(onRetry = { viewModel.loadSessions() })
+            }
 
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(), // ocupa todo el ancho
-                            contentAlignment = Alignment.Center // centra el contenido
-                        ) {
-                            RefreshButton(
-                                isLoading = isLoading,
-                                onClick = { viewModel.loadSessions() },
-                                isErrorState = false
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                        }
-                    }
+            else -> {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Circuits",
+                        style = MaterialTheme.typography.body2,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
 
-                    sessions.entries.reversed().forEach { (meetingKey, sessionList) ->
-                        item(key = meetingKey) {
-                            val circuitName = sessionList.first().circuit_short_name
-                            val countryName = sessionList.first().country_name
-                            Button(
-                                onClick = { viewModel.toggleMeetingSessions(meetingKey) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp, horizontal = 8.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = MaterialTheme.colors.surface,
-                                    contentColor = Color(0xFFFFFFFF),
-                                ),
-                                shape = MaterialTheme.shapes.small
+                    ScalingLazyColumn {
+
+                        item {
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = "$circuitName, $countryName",
-                                    style = MaterialTheme.typography.body2
+                                RefreshButton(
+                                    isLoading = isLoading,
+                                    onClick = { viewModel.loadSessions() },
+                                    isErrorState = false
                                 )
                             }
                         }
 
-                        if (expandedMeetingKey == meetingKey) {
-                            items(
-                                items = sessionList,
-                                key = { it.session_key }
-                            ) { session ->
+                        sessions.entries.reversed().forEach { (meetingKey, sessionList) ->
+                            item(key = meetingKey) {
+                                val circuitName = sessionList.first().circuit_short_name
+                                val countryName = sessionList.first().country_name
                                 Button(
-                                    onClick = { onSessionClick(session.session_key) },
-                                    colors = ButtonDefaults.buttonColors(
-                                        backgroundColor = MaterialTheme.colors.secondary,
-                                        contentColor = MaterialTheme.colors.onSecondary
-                                    ),
+                                    onClick = { viewModel.toggleMeetingSessions(meetingKey) },
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
+                                        .padding(vertical = 4.dp, horizontal = 8.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = MaterialTheme.colors.surface,
+                                        contentColor = Color.White
+                                    ),
                                     shape = MaterialTheme.shapes.small
                                 ) {
                                     Text(
-                                        text = session.session_name,
+                                        text = "$circuitName, $countryName",
                                         style = MaterialTheme.typography.body2
                                     )
+                                }
+                            }
+
+                            if (expandedMeetingKey == meetingKey) {
+                                items(
+                                    items = sessionList,
+                                    key = { it.session_key }
+                                ) { session ->
+                                    Button(
+                                        onClick = { onSessionClick(session.session_key) },
+                                        colors = ButtonDefaults.buttonColors(
+                                            backgroundColor = MaterialTheme.colors.secondary,
+                                            contentColor = MaterialTheme.colors.onSecondary
+                                        ),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
+                                        shape = MaterialTheme.shapes.small
+                                    ) {
+                                        Text(
+                                            text = session.session_name,
+                                            style = MaterialTheme.typography.body2
+                                        )
+                                    }
                                 }
                             }
                         }

@@ -35,7 +35,7 @@ fun DriverPositionItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 4.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp),
         contentColor = MaterialTheme.colors.onSurface,
         onClick = {  }
     ) {

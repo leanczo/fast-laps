@@ -30,10 +30,14 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
     private val _currentSessionKey = MutableStateFlow<Int?>(null)
     val currentSessionKey: StateFlow<Int?> = _currentSessionKey.asStateFlow()
 
+    var simulateError = false
+    var simulateEmpty = false
+
     fun loadSessionData(sessionKey: Int) {
         _currentSessionKey.value = sessionKey
-
         viewModelScope.launch {
+            _isLoading.value = true
+            _errorState.value = null
             try {
                 // Cargar posiciones y pilotos en paralelo
                 val positionsDeferred = async { repository.getSessionPositions(sessionKey) }
@@ -43,16 +47,19 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
                 val drivers = driversDeferred.await()
 
                 _drivers.value = drivers
-
-                // Procesar posiciones una sola vez con toda la información
                 _finalPositions.value = repository.processFinalPositions(positions, drivers)
 
             } catch (e: Exception) {
                 Log.e("RaceViewModel", "Error loading session data", e)
                 _finalPositions.value = emptyList()
+                _errorState.value = "Error loading session data: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
+
+
 
     // Función mejorada para cargar sesiones
     fun loadSessions(year: Int = 2025) {
@@ -61,7 +68,11 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
                 _isLoading.value = true
                 _errorState.value = null
 
-                val response = repository.getSessions(year)
+                if (simulateError) {
+                    throw Exception("Simulated API error")
+                }
+
+                val response = if (simulateEmpty) emptyList() else repository.getSessions(year)
                 _sessions.value = response.groupBy { it.meeting_key }
 
             } catch (e: Exception) {

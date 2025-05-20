@@ -35,10 +35,9 @@ fun MainScreen(
         ScalingLazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
+            verticalArrangement = Arrangement.Top
         ) {
-            item { Spacer(modifier = Modifier.height(12.dp)) }
-
+            item { Spacer(modifier = Modifier.height(8.dp)) }
             item {
                 Chip(
                     onClick = onCircuitsClick,
