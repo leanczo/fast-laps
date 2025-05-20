@@ -3,6 +3,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -19,7 +20,8 @@ import androidx.wear.compose.material.MaterialTheme
 fun RefreshButton(
     isLoading: Boolean,
     onClick: () -> Unit,
-    isErrorState: Boolean
+    isErrorState: Boolean,
+    modifier: Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition()
     val rotation = infiniteTransition.animateFloat(
@@ -32,7 +34,7 @@ fun RefreshButton(
 
     Button(
         onClick = onClick,
-        modifier = Modifier.size(28.dp),
+        modifier = modifier.size(40.dp), // Tamaño más razonable para wearables
         colors = ButtonDefaults.buttonColors(
             backgroundColor = if (isErrorState) MaterialTheme.colors.error
             else MaterialTheme.colors.secondary,
@@ -40,7 +42,7 @@ fun RefreshButton(
             else MaterialTheme.colors.onSecondary
         ),
         shape = MaterialTheme.shapes.small,
-        enabled = !isLoading
+        enabled = !isLoading,
     ) {
         Icon(
             imageVector = Icons.Default.Refresh,

@@ -27,7 +27,12 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _currentSessionKey = MutableStateFlow<Int?>(null)
+    val currentSessionKey: StateFlow<Int?> = _currentSessionKey.asStateFlow()
+
     fun loadSessionData(sessionKey: Int) {
+        _currentSessionKey.value = sessionKey
+
         viewModelScope.launch {
             try {
                 // Cargar posiciones y pilotos en paralelo
@@ -84,7 +89,7 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
     fun fetchSessions() {
         viewModelScope.launch {
             try {
-                val response = repository.getSessions(2025) // Año actualizado
+                val response = repository.getSessions(2025)
                 _sessions.value = response.groupBy { it.meeting_key }
             } catch (e: Exception) {
                 Log.e("RaceViewModel", "Error fetching sessions", e)
@@ -94,6 +99,14 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
 
     fun retryLoading() {
         loadSessions()
+    }
+
+    fun setErrorState(message: String?) {
+        _errorState.value = message
+    }
+
+    fun getErrorState(): String? {
+        return _errorState.value
     }
 
     // 3. Función para expandir/contraer sesiones
