@@ -5,15 +5,15 @@ plugins {
 }
 
 android {
-    namespace = "com.fastlaps"
+    namespace = "com.leandro.fastlaps"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.fastlaps"
+        applicationId = "com.leandro.fastlaps"
         minSdk = 30
         targetSdk = 35
-        versionCode = 5
-        versionName = "1.4"
+        versionCode = 8
+        versionName = "1.5"
 
         wearAppUnbundled=true
     }
