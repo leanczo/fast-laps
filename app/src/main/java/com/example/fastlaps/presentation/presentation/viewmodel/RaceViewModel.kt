@@ -1,5 +1,6 @@
 package com.example.fastlaps.presentation.presentation.viewmodel
 
+import DriverStanding
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +8,7 @@ import com.example.fastlaps.presentation.domain.repository.SessionRepository
 import com.example.fastlaps.presentation.model.Driver
 import com.example.fastlaps.presentation.model.FinalPosition
 import com.example.fastlaps.presentation.model.Session
+import com.example.fastlaps.presentation.repository.DriverStandingsRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +16,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 // RaceViewModel.kt
-class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
+class RaceViewModel() : ViewModel() {
+    private val sessionRepository = SessionRepository()
+    private val driverStandingsRepository = DriverStandingsRepository()
+
     private val _finalPositions = MutableStateFlow<List<FinalPosition>>(emptyList())
     val finalPositions: StateFlow<List<FinalPosition>> = _finalPositions.asStateFlow()
 
@@ -40,14 +45,14 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
             _errorState.value = null
             try {
                 // Cargar posiciones y pilotos en paralelo
-                val positionsDeferred = async { repository.getSessionPositions(sessionKey) }
-                val driversDeferred = async { repository.getSessionDrivers(sessionKey) }
+                val positionsDeferred = async { sessionRepository.getSessionPositions(sessionKey) }
+                val driversDeferred = async { sessionRepository.getSessionDrivers(sessionKey) }
 
                 val positions = positionsDeferred.await()
                 val drivers = driversDeferred.await()
 
                 _drivers.value = drivers
-                _finalPositions.value = repository.processFinalPositions(positions, drivers)
+                _finalPositions.value = sessionRepository.processFinalPositions(positions, drivers)
 
             } catch (e: Exception) {
                 Log.e("RaceViewModel", "Error loading session data", e)
@@ -72,7 +77,7 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
                     throw Exception("Simulated API error")
                 }
 
-                val response = if (simulateEmpty) emptyList() else repository.getSessions(year)
+                val response = if (simulateEmpty) emptyList() else sessionRepository.getSessions(year)
                 _sessions.value = response.groupBy { it.meeting_key }
 
             } catch (e: Exception) {
@@ -100,7 +105,7 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
     fun fetchSessions() {
         viewModelScope.launch {
             try {
-                val response = repository.getSessions(2025)
+                val response = sessionRepository.getSessions(2025)
                 _sessions.value = response.groupBy { it.meeting_key }
             } catch (e: Exception) {
                 Log.e("RaceViewModel", "Error fetching sessions", e)
@@ -135,5 +140,38 @@ class RaceViewModel(private val repository: SessionRepository) : ViewModel() {
 
     init {
         fetchSessions() // Cargar sesiones al inicializar
+        //loadDriverStandings()
+    }
+
+
+    private val _driverStandings = MutableStateFlow<List<DriverStanding>>(emptyList())
+    val driverStandings = _driverStandings.asStateFlow()
+
+    private val _isLoadingDrivers = MutableStateFlow(false)
+    val isLoadingDrivers = _isLoadingDrivers.asStateFlow()
+
+    private val _driverErrorState = MutableStateFlow<String?>(null)
+    val driverErrorState = _driverErrorState.asStateFlow()
+
+    fun loadDriverStandings() {
+        viewModelScope.launch {
+            _isLoadingDrivers.value = true
+            _driverErrorState.value = null
+
+            try {
+                val response = driverStandingsRepository.getDriverStandings(2025)
+                val standings = response.MRData.StandingsTable.StandingsLists.first().DriverStandings
+                _driverStandings.value = standings
+
+                if (standings.isEmpty()) {
+                    _driverErrorState.value = "No driver standings available"
+                }
+            } catch (e: Exception) {
+                _driverErrorState.value = "Failed to load driver standings: ${e.localizedMessage}"
+                Log.e("RaceViewModel", "Error loading driver standings", e)
+            } finally {
+                _isLoadingDrivers.value = false
+            }
+        }
     }
 }

@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.fastlaps.presentation.domain.repository.SessionRepository
 
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import com.example.fastlaps.presentation.theme.FastlapsTheme
@@ -22,7 +21,7 @@ fun WearApp() {
             ): T {
                 if (modelClass.isAssignableFrom(RaceViewModel::class.java)) {
                     @Suppress("UNCHECKED_CAST")
-                    return RaceViewModel(SessionRepository()) as T
+                    return RaceViewModel() as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class")
             }

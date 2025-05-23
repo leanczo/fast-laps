@@ -19,6 +19,7 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.ui.res.stringResource
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import com.leandro.fastlaps.R
@@ -27,6 +28,7 @@ import com.leandro.fastlaps.R
 fun MainScreen(
     onCircuitsClick: () -> Unit,
     onAboutClick: () -> Unit,
+    onPilotsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -45,6 +47,27 @@ fun MainScreen(
                     icon = {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    },
+                    colors = ChipDefaults.chipColors(
+                        backgroundColor = MaterialTheme.colors.secondary,
+                        contentColor = MaterialTheme.colors.onSecondary
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                )
+            }
+
+            item {
+                Chip(
+                    onClick = onPilotsClick,
+                    label = { Text("Pilots") },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.EmojiEvents,
                             contentDescription = null,
                             modifier = Modifier.size(20.dp)
                         )
