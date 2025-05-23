@@ -30,14 +30,44 @@ fun AboutScreen(
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Data provided by OpenF1",
+                text = "Data provided by:",
+                style = MaterialTheme.typography.caption2,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 8.dp)
+            )
+
+            // OpenF1 section
+            Text(
+                text = "• OpenF1 API (openf1.org)",
                 style = MaterialTheme.typography.caption3,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 16.dp)
+                    .padding(bottom = 4.dp)
             )
 
+            // Jolpica F1 section
+            Text(
+                text = "• Jolpica F1 (api.jolpi.ca)",
+                style = MaterialTheme.typography.caption3,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+            )
+
+            Text(
+                text = "Jolpica F1 is an open source API providing Formula 1 data, with endpoints compatible with the Ergast API. It's maintained by volunteers and supported by donations.",
+                style = MaterialTheme.typography.caption3,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+
+            // General disclaimer
             Text(
                 text = "The data may not be completely accurate and is subject to change. This application is for informational and entertainment purposes only.",
                 style = MaterialTheme.typography.caption3,
@@ -46,13 +76,27 @@ fun AboutScreen(
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
             )
+
+            // Usage policy
             Text(
-                text = "This app uses the OpenF1 API (openf1.org), an open-source service without authentication or usage limits. Please use it responsibly. The data may not be completely accurate and is subject to change.",
+                text = "Both APIs are open-source services without authentication or usage limits. Please use them responsibly.",
                 style = MaterialTheme.typography.caption3,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
+            )
+
+            // Official disclaimer
+            Text(
+                text = "This application is not officially associated with or endorsed by Formula 1, FIA, FOM, or any related organization.",
+                style = MaterialTheme.typography.caption3.copy(
+                    color = MaterialTheme.colors.error
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
             )
         }
     }
