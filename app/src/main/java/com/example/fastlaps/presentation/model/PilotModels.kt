@@ -1,16 +1,16 @@
 data class DriverStandingsResponse(
-    val MRData: MRData
+    val MRData: DriverMRData
 )
 
-data class MRData(
-    val StandingsTable: StandingsTable
+data class DriverMRData(
+    val StandingsTable: DriverStandingsTable
 )
 
-data class StandingsTable(
-    val StandingsLists: List<StandingsList>
+data class DriverStandingsTable(
+    val StandingsLists: List<DriverStandingsList>
 )
 
-data class StandingsList(
+data class DriverStandingsList(
     val DriverStandings: List<DriverStanding>
 )
 
@@ -34,7 +34,3 @@ data class Driver(
 
 
 
-data class Constructor(
-    val name: String,
-    val nationality: String
-)

@@ -20,6 +20,7 @@ fun AppNavigation(viewModel: RaceViewModel) {
                 onCircuitsClick = { navController.navigate("sessionList") },
                 onPilotsClick = { navController.navigate("pilotList") },
                 onAboutClick = { navController.navigate("about") },
+                onConstructorsClick = { navController.navigate("constructors") }
             )
         }
 
@@ -42,6 +43,13 @@ fun AppNavigation(viewModel: RaceViewModel) {
 
         composable("pilotList") {
             PilotsScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("constructors") {
+            ConstructorsScreen(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() }
             )

@@ -1,5 +1,6 @@
 package com.example.fastlaps.presentation.repository
 
+import ConstructorStandingsResponse
 import DriverStanding
 import DriverStandingsResponse
 import com.example.fastlaps.presentation.network.ErgastRetrofitInstance
@@ -19,5 +20,9 @@ class DriverStandingsRepository {
     suspend fun getTopDrivers(year: Int, count: Int): List<DriverStanding> {
         val standings = getProcessedDriverStandings(year)
         return standings.take(count)
+    }
+
+    suspend fun getConstructorStandings(year: Int): ConstructorStandingsResponse {
+        return api.getConstructorStandings(year)
     }
 }

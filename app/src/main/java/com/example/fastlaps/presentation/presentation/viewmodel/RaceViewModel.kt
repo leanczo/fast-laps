@@ -1,5 +1,6 @@
 package com.example.fastlaps.presentation.presentation.viewmodel
 
+import ConstructorStanding
 import DriverStanding
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -171,6 +172,35 @@ class RaceViewModel() : ViewModel() {
                 Log.e("RaceViewModel", "Error loading driver standings", e)
             } finally {
                 _isLoadingDrivers.value = false
+            }
+        }
+    }
+
+
+
+    // Nuevos estados para constructores
+    private val _constructorStandings = MutableStateFlow<List<ConstructorStanding>>(emptyList())
+    val constructorStandings: StateFlow<List<ConstructorStanding>> = _constructorStandings.asStateFlow()
+
+    private val _isLoadingConstructors = MutableStateFlow(false)
+    val isLoadingConstructors = _isLoadingConstructors.asStateFlow()
+
+    private val _constructorErrorState = MutableStateFlow<String?>(null)
+    val constructorErrorState = _constructorErrorState.asStateFlow()
+
+    // Función para cargar datos
+    fun loadConstructorStandings(year: Int = 2025) {
+        viewModelScope.launch {
+            _isLoadingConstructors.value = true
+            _constructorErrorState.value = null
+            try {
+                val response = driverStandingsRepository.getConstructorStandings(year)
+                _constructorStandings.value = response.MRData.StandingsTable.StandingsLists.first().ConstructorStandings
+            } catch (e: Exception) {
+                _constructorErrorState.value = "Error loading constructor standings: ${e.localizedMessage}"
+                Log.e("RaceViewModel", "Error loading constructor standings", e)
+            } finally {
+                _isLoadingConstructors.value = false
             }
         }
     }

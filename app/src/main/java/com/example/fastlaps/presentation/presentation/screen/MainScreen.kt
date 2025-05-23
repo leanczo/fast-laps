@@ -22,6 +22,7 @@ import androidx.wear.compose.material.Text
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -35,6 +36,7 @@ fun MainScreen(
     onCircuitsClick: () -> Unit,
     onAboutClick: () -> Unit,
     onPilotsClick: () -> Unit,
+    onConstructorsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -103,6 +105,21 @@ fun MainScreen(
                             modifier = Modifier.size(20.dp)
                         )
                     },
+                    colors = ChipDefaults.chipColors(
+                        backgroundColor = MaterialTheme.colors.secondary,
+                        contentColor = MaterialTheme.colors.onSecondary
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                )
+            }
+
+            item {
+                Chip(
+                    onClick = onConstructorsClick,
+                    label = { Text("Constructors") },
+                    icon = { Icon(Icons.Default.Groups, null) },
                     colors = ChipDefaults.chipColors(
                         backgroundColor = MaterialTheme.colors.secondary,
                         contentColor = MaterialTheme.colors.onSecondary
