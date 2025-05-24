@@ -27,6 +27,30 @@ fun ConstructorStandingItem(
         else -> MaterialTheme.colors.primary
     }
 
+    fun getCountryFlagEmoji(nationality: String): String {
+        return when (nationality.lowercase()) {
+            "british" -> "🇬🇧"
+            "spanish" -> "🇪🇸"
+            "dutch" -> "🇳🇱"
+            "monegasque" -> "🇲🇨"
+            "australian" -> "🇦🇺"
+            "thai" -> "🇹🇭"
+            "french" -> "🇫🇷"
+            "canadian" -> "🇨🇦"
+            "japanese" -> "🇯🇵"
+            "chinese" -> "🇨🇳"
+            "german" -> "🇩🇪"
+            "italian" -> "🇮🇹"
+            "american" -> "🇺🇸"
+            "swiss" -> "🇨🇭"
+            "new zealander" -> "🇳🇿"
+            "argentine" -> "🇦🇷"
+            "brazilian" -> "🇧🇷"
+            "austrian" -> "🇦🇹"
+            else -> "🏳️" // Banderas no encontradas
+        }
+    }
+
     Card(
         modifier = modifier.fillMaxWidth(),
         contentColor = MaterialTheme.colors.onSurface,
@@ -57,13 +81,14 @@ fun ConstructorStandingItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(
-                    text = standing.Constructor.nationality,
-                    style = MaterialTheme.typography.caption2,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = getCountryFlagEmoji(standing.Constructor.nationality) + " " + standing.Constructor.nationality,
+                        style = MaterialTheme.typography.caption2,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
 
             // Puntos

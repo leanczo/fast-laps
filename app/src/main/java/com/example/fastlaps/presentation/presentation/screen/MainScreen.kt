@@ -76,7 +76,7 @@ fun MainScreen(
             item {
                 Chip(
                     onClick = onCircuitsClick,
-                    label = { Text("Circuits") },
+                    label = { Text("Races") },
                     icon = {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
@@ -97,7 +97,7 @@ fun MainScreen(
             item {
                 Chip(
                     onClick = onPilotsClick,
-                    label = { Text("Pilots") },
+                    label = { Text("Drivers") },
                     icon = {
                         Icon(
                             imageVector = Icons.Default.EmojiEvents,
@@ -118,7 +118,7 @@ fun MainScreen(
             item {
                 Chip(
                     onClick = onConstructorsClick,
-                    label = { Text("Constructors") },
+                    label = { Text("Teams") },
                     icon = { Icon(Icons.Default.Groups, null) },
                     colors = ChipDefaults.chipColors(
                         backgroundColor = MaterialTheme.colors.secondary,

@@ -88,7 +88,7 @@ fun SessionResultsScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Text(
-                        text = "Positions",
+                        text = "Results",
                         style = MaterialTheme.typography.body2,
                         textAlign = TextAlign.Center,
                         modifier = Modifier

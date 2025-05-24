@@ -34,7 +34,7 @@ fun RefreshButton(
 
     Button(
         onClick = onClick,
-        modifier = modifier.size(40.dp), // Tamaño más razonable para wearables
+        modifier = modifier.size(45.dp), // Tamaño más razonable para wearables
         colors = ButtonDefaults.buttonColors(
             backgroundColor = if (isErrorState) MaterialTheme.colors.error
             else MaterialTheme.colors.secondary,

@@ -39,10 +39,10 @@ fun ConstructorsScreen(
         modifier = modifier,
         positionIndicator = { PositionIndicator(scrollState = rememberScrollState()) }
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            contentAlignment = Alignment.Center
         ) {
             when {
                 isLoading -> {
@@ -66,7 +66,7 @@ fun ConstructorsScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Constructors",
+                            text = "Teams",
                             style = MaterialTheme.typography.body2,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
