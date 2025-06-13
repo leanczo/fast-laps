@@ -14,6 +14,14 @@ This app is built with **Kotlin** and designed specifically for **Wear OS smartw
 - ⚙️ Optimized for Wear OS devices.
 
 ---
+## 🌐 Data Sources
+
+Fast Laps uses the following public APIs to fetch race and championship data:
+
+- [**Ergast API**](http://ergast.com/mrd/) – Historical and current F1 data (standings, results, etc.)
+- [**OpenF1 API**](https://openf1.org/) – Real-time data feeds for race positions and telemetry
+
+---
 
 ## 🚀 Try the App
 
