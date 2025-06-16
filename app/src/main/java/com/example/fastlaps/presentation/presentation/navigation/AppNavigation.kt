@@ -1,17 +1,18 @@
-import androidx.compose.runtime.Composable
-import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 
+
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.fastlaps.presentation.presentation.screen.SessionResultsScreen
-import androidx.compose.runtime.getValue
+import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 
 @Composable
-fun AppNavigation(viewModel: RaceViewModel, currentLang: String, onLanguageChange: () -> Unit ) {
+fun AppNavigation(viewModel: RaceViewModel, currentLang: String, onLanguageChange: () -> Unit) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "mainScreen") {
@@ -21,6 +22,7 @@ fun AppNavigation(viewModel: RaceViewModel, currentLang: String, onLanguageChang
                 onPilotsClick = { navController.navigate("pilotList") },
                 onAboutClick = { navController.navigate("about") },
                 onConstructorsClick = { navController.navigate("constructors") },
+                onNewsClick = { navController.navigate("news") },
                 currentLang = currentLang,
                 onLanguageChange = onLanguageChange
             )
@@ -53,6 +55,14 @@ fun AppNavigation(viewModel: RaceViewModel, currentLang: String, onLanguageChang
             ConstructorsScreen(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("news") {
+            NewsScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() },
+                currentLang = currentLang
             )
         }
 

@@ -11,8 +11,14 @@
     <string name="spanish">Español</string>
     <string name="change_language">Cambiar idioma</string>
     <string name="change_to">Cambiar a</string>
-
     <string name="results">Resultados</string>
+
+    <string name="retry">Reintentar</string>
+    <string name="error">Error cargando datos</string>
+    <string name="no_data">No hay datos disponibles</string>
+    <string name="refresh">Actualizar</string>
+    <string name="open_phone">Abrir en el celular</string>
+    <string name="no_session">No hay sesión seleccionada</string>
 
     <string name="about_data_provided_by">Datos proporcionados por:</string>
     <string name="about_openf1">• OpenF1 API (openf1.org)</string>
@@ -21,5 +27,10 @@
     <string name="about_disclaimer">Los datos pueden no ser completamente precisos y están sujetos a cambios. Esta aplicación es solo para fines informativos y de entretenimiento.</string>
     <string name="about_usage_policy">Ambas APIs son servicios de código abierto sin autenticación ni límites de uso. Por favor, úsalas de manera responsable.</string>
     <string name="about_official_disclaimer">Esta aplicación no está asociada oficialmente ni respaldada por la Fórmula 1, FIA, FOM o cualquier organización relacionada.</string>
+    <string name="news">Noticias</string>
+    <string name="news_title">Noticias F1</string>
+    <string name="about_news_sources">Noticias extraídas de las siguientes fuentes:</string>
+    <string name="about_news_english">• Motorsport (inglés):</string>
+    <string name="about_news_spanish">• Motorsport (español):</string>
 </resources>
 

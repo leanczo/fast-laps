@@ -1,9 +1,6 @@
 package com.example.fastlaps.presentation.presentation.component
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,11 +16,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
 import androidx.wear.compose.material.Card
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.model.FinalPosition
-import androidx.core.graphics.toColorInt
 
 
 @Composable
@@ -70,7 +67,7 @@ fun DriverPositionItem(
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Canvas(modifier = Modifier.size(8.dp)) {
-                        drawCircle(color = Color(android.graphics.Color.parseColor("#${driverInfo?.team_colour}")))
+                        drawCircle(color = Color("#${driverInfo?.team_colour}".toColorInt()))
                     }
                     Spacer(Modifier.width(4.dp))
                     Text(

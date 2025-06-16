@@ -1,20 +1,22 @@
+
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
+import com.leandro.fastlaps.R
 
 @Composable
 fun RefreshButton(
@@ -34,7 +36,7 @@ fun RefreshButton(
 
     Button(
         onClick = onClick,
-        modifier = modifier.size(45.dp), // Tamaño más razonable para wearables
+        modifier = modifier.size(45.dp),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = if (isErrorState) MaterialTheme.colors.error
             else MaterialTheme.colors.secondary,
@@ -46,7 +48,7 @@ fun RefreshButton(
     ) {
         Icon(
             imageVector = Icons.Default.Refresh,
-            contentDescription = "Refresh",
+            contentDescription = stringResource(R.string.refresh),
             modifier = Modifier
                 .size(16.dp)
                 .graphicsLayer {

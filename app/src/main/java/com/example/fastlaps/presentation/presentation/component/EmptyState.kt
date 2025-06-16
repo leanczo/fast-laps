@@ -4,12 +4,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import com.leandro.fastlaps.R
 
 @Composable
 fun EmptyState(
@@ -22,7 +24,7 @@ fun EmptyState(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "No data available",
+            text = stringResource(R.string.no_data),
             style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
             textAlign = TextAlign.Center,
@@ -35,7 +37,7 @@ fun EmptyState(
                 contentColor = MaterialTheme.colors.onSecondary
             )
         ) {
-            Text("Retry")
+            Text(stringResource(R.string.retry))
         }
     }
 }

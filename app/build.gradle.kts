@@ -39,7 +39,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.play.services.wearable)
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
@@ -57,9 +56,11 @@ dependencies {
     implementation(libs.compose.runtime)
     implementation(libs.material.icons.core)
     implementation(libs.material.icons.extended)
+    implementation(libs.rssparser)
+    implementation(libs.wear.remote.interactions)
+    implementation(libs.wear.input)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
-
 }

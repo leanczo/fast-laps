@@ -9,15 +9,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
-
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import com.example.fastlaps.presentation.theme.FastlapsTheme
 import java.util.Locale
-
 
 @Composable
 fun WearApp() {
@@ -26,7 +25,6 @@ fun WearApp() {
         context.getSharedPreferences("settings", Context.MODE_PRIVATE)
     }
 
-    // Estado para el idioma actual
     var currentLang by remember {
         mutableStateOf(prefs.getString("language", Locale.getDefault().language) ?: "en")
     }
@@ -46,16 +44,19 @@ fun WearApp() {
         }
     )
 
-    // Función para cambiar el idioma
     val toggleLanguage = {
         val newLang = if (currentLang == "en") "es" else "en"
-        prefs.edit().putString("language", newLang).apply()
+        prefs.edit() { putString("language", newLang) }
         currentLang = newLang
-        // Reiniciar la actividad para aplicar los cambios
-        (context as? Activity)?.recreate()
+        val activity = context as? Activity
+        if (activity != null) {
+            activity.recreate()
+        } else {
+            throw IllegalStateException("Unable to recreate activity")
+        }
     }
 
     FastlapsTheme {
-        AppNavigation(viewModel, currentLang, toggleLanguage as () -> Unit)
+        AppNavigation(viewModel, currentLang, toggleLanguage)
     }
 }

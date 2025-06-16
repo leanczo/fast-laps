@@ -1,9 +1,9 @@
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,9 +21,9 @@ fun ConstructorStandingItem(
     modifier: Modifier = Modifier
 ) {
     val positionColor = when (standing.position.toIntOrNull() ?: 0) {
-        1 -> Color(0xFFFFD700) // Oro
-        2 -> Color(0xFFC0C0C0) // Plata
-        3 -> Color(0xFFCD7F32) // Bronce
+        1 -> Color(0xFFFFD700)
+        2 -> Color(0xFFC0C0C0)
+        3 -> Color(0xFFCD7F32)
         else -> MaterialTheme.colors.primary
     }
 
@@ -47,14 +47,14 @@ fun ConstructorStandingItem(
             "argentine" -> "🇦🇷"
             "brazilian" -> "🇧🇷"
             "austrian" -> "🇦🇹"
-            else -> "🏳️" // Banderas no encontradas
+            else -> "🏳️"
         }
     }
 
     Card(
         modifier = modifier.fillMaxWidth(),
         contentColor = MaterialTheme.colors.onSurface,
-        onClick = { /* Acción al hacer clic */ }
+        onClick = {  }
     ) {
         Row(
             modifier = Modifier
@@ -63,7 +63,6 @@ fun ConstructorStandingItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Posición
             Text(
                 text = "#${standing.position}",
                 style = MaterialTheme.typography.body1,
@@ -71,7 +70,6 @@ fun ConstructorStandingItem(
                 color = positionColor,
             )
 
-            // Nombre del equipo y nacionalidad
             Column(
                 modifier = Modifier.weight(1f).padding(start = 8.dp)
             ) {
@@ -91,9 +89,8 @@ fun ConstructorStandingItem(
                 }
             }
 
-            // Puntos
             Text(
-                text = "${standing.points}",
+                text = standing.points,
                 style = MaterialTheme.typography.body1,
                 fontWeight = FontWeight.Bold
             )

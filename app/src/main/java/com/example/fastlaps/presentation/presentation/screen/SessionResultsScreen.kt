@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -26,8 +28,6 @@ import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.model.FinalPosition
 import com.example.fastlaps.presentation.presentation.component.DriverPositionItem
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.res.stringResource
 import com.leandro.fastlaps.R
 
 @Composable
@@ -40,6 +40,7 @@ fun SessionResultsScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val currentSessionKey by viewModel.currentSessionKey.collectAsState()
 
+    val no_session_message = stringResource(R.string.no_session);
     DisposableEffect(Unit) {
         onDispose {
             viewModel.resetSessionResults()
@@ -66,7 +67,7 @@ fun SessionResultsScreen(
                         currentSessionKey?.let { sessionKey ->
                             viewModel.loadSessionData(sessionKey)
                         } ?: run {
-                            viewModel.setErrorState("No session selected")
+                            viewModel.setErrorState(no_session_message)
                         }
                     }
                 )
@@ -78,7 +79,7 @@ fun SessionResultsScreen(
                         currentSessionKey?.let { sessionKey ->
                             viewModel.loadSessionData(sessionKey)
                         } ?: run {
-                            viewModel.setErrorState("No session selected")
+                            viewModel.setErrorState(no_session_message)
                         }
                     },
                     modifier = Modifier.fillMaxSize()
@@ -113,7 +114,7 @@ fun SessionResultsScreen(
                                         currentSessionKey?.let { sessionKey ->
                                             viewModel.loadSessionData(sessionKey)
                                         } ?: run {
-                                            viewModel.setErrorState("No session selected")
+                                            viewModel.setErrorState(no_session_message)
                                         }
                                     },
                                     isErrorState = false,

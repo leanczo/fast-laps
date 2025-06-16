@@ -12,6 +12,9 @@ retrofit = "2.9.0"
 okhttpLogging = "4.12.0"
 navigationCompose = "2.9.0"
 composeRuntime = "1.8.1"
+rssparser = "6.0.7"
+wearRemoteInteractions = "1.0.0"
+wearInput = "1.0.0"
 
 [libraries]
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
@@ -34,6 +37,9 @@ navigation-compose = { group = "androidx.navigation", name = "navigation-compose
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "composeRuntime" }
 material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+rssparser = { group = "com.prof18.rssparser", name = "rssparser", version.ref = "rssparser" }
+wear-remote-interactions = { group = "androidx.wear", name = "wear-remote-interactions", version.ref = "wearRemoteInteractions" }
+wear-input = { group = "androidx.wear", name = "wear-input", version.ref = "wearInput" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

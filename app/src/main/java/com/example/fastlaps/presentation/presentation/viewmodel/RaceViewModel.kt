@@ -2,6 +2,8 @@ package com.example.fastlaps.presentation.presentation.viewmodel
 
 import ConstructorStanding
 import DriverStanding
+import NewsModel
+import NewsRepository
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -203,5 +205,47 @@ class RaceViewModel() : ViewModel() {
                 _isLoadingConstructors.value = false
             }
         }
+    }
+
+    private val newsRepository = NewsRepository()
+    private val _news = MutableStateFlow<List<NewsModel>>(emptyList())
+    val news: StateFlow<List<NewsModel>> = _news.asStateFlow()
+
+    private val _isLoadingNews = MutableStateFlow(false)
+    val isLoadingNews: StateFlow<Boolean> = _isLoadingNews.asStateFlow()
+
+    private val _newsErrorState = MutableStateFlow<String?>(null)
+    val newsErrorState: StateFlow<String?> = _newsErrorState.asStateFlow()
+
+    // Función para cargar noticias (consistente con otras funciones)
+    fun loadNews(language: String) {
+        viewModelScope.launch {
+            _isLoadingNews.value = true
+            _newsErrorState.value = null
+
+            try {
+                val newsResult = newsRepository.getF1News(language)
+                _news.value = newsResult
+
+                if (newsResult.isEmpty()) {
+                    _newsErrorState.value = "No news available"
+                }
+            } catch (e: Exception) {
+                _newsErrorState.value = when (e) {
+                    is java.net.UnknownHostException -> "No internet connection"
+                    is java.net.SocketTimeoutException -> "Connection timeout"
+                    else -> "Failed to load news: ${e.localizedMessage}"
+                }
+                Log.e("RaceViewModel", "Error loading news", e)
+                _news.value = emptyList()
+            } finally {
+                _isLoadingNews.value = false
+            }
+        }
+    }
+
+    // Función para reintentar cargar noticias
+    fun retryLoadingNews(language: String) {
+        loadNews(language)
     }
 }
