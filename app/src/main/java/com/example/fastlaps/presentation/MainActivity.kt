@@ -6,6 +6,7 @@
 package com.example.fastlaps.presentation
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +15,13 @@ import com.example.fastlaps.presentation.presentation.WearApp
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: Context) {
+        val prefs = newBase.getSharedPreferences("settings", MODE_PRIVATE)
+        val lang = prefs.getString("language", Locale.getDefault().language) ?: "en"
+        val updatedContext = setLocale(newBase, lang)
+        super.attachBaseContext(updatedContext)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         val prefs = getSharedPreferences("settings", MODE_PRIVATE)
@@ -28,13 +36,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun setLocale(context: Context, language: String) {
+    fun setLocale(context: Context, language: String): Context {
         val locale = Locale(language)
         Locale.setDefault(locale)
-
-        val resources = context.resources
-        val config = resources.configuration
+        val config = Configuration(context.resources.configuration)
         config.setLocale(locale)
-        resources.updateConfiguration(config, resources.displayMetrics)
+        return context.createConfigurationContext(config)
     }
 }
