@@ -27,6 +27,8 @@ import com.example.fastlaps.presentation.model.FinalPosition
 import com.example.fastlaps.presentation.presentation.component.DriverPositionItem
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import com.leandro.fastlaps.R
 
 @Composable
 fun SessionResultsScreen(
@@ -88,7 +90,7 @@ fun SessionResultsScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Text(
-                        text = "Results",
+                        text = stringResource(R.string.results),
                         style = MaterialTheme.typography.body2,
                         textAlign = TextAlign.Center,
                         modifier = Modifier

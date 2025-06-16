@@ -17,6 +17,8 @@ import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import androidx.compose.ui.unit.dp
 import com.example.fastlaps.presentation.presentation.component.DriverStandingItem
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import com.leandro.fastlaps.R
 
 @Composable
 fun PilotsScreen(
@@ -60,7 +62,7 @@ fun PilotsScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Drivers",
+                        text = stringResource(R.string.drivers),
                         style = MaterialTheme.typography.body2,
                         textAlign = TextAlign.Center,
                         modifier = Modifier

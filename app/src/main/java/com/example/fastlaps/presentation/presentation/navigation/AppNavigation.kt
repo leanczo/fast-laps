@@ -11,7 +11,7 @@ import com.example.fastlaps.presentation.presentation.screen.SessionResultsScree
 import androidx.compose.runtime.getValue
 
 @Composable
-fun AppNavigation(viewModel: RaceViewModel) {
+fun AppNavigation(viewModel: RaceViewModel, currentLang: String, onLanguageChange: () -> Unit ) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "mainScreen") {
@@ -20,13 +20,14 @@ fun AppNavigation(viewModel: RaceViewModel) {
                 onCircuitsClick = { navController.navigate("sessionList") },
                 onPilotsClick = { navController.navigate("pilotList") },
                 onAboutClick = { navController.navigate("about") },
-                onConstructorsClick = { navController.navigate("constructors") }
+                onConstructorsClick = { navController.navigate("constructors") },
+                currentLang = currentLang,
+                onLanguageChange = onLanguageChange
             )
         }
 
         composable("about") {
             AboutScreen(
-                onBack = { navController.popBackStack() }
             )
         }
 

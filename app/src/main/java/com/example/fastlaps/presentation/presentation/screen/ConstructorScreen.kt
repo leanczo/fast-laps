@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -20,6 +21,7 @@ import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
+import com.leandro.fastlaps.R
 
 @Composable
 fun ConstructorsScreen(
@@ -66,7 +68,7 @@ fun ConstructorsScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Teams",
+                            text = stringResource(R.string.teams),
                             style = MaterialTheme.typography.body2,
                             textAlign = TextAlign.Center,
                             modifier = Modifier

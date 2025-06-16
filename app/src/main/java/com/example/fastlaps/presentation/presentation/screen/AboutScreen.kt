@@ -4,13 +4,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.*
+import com.leandro.fastlaps.R
 
 @Composable
 fun AboutScreen(
-    onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -30,7 +31,7 @@ fun AboutScreen(
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Data provided by:",
+                text = stringResource(R.string.about_data_provided_by),
                 style = MaterialTheme.typography.caption2,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -40,7 +41,7 @@ fun AboutScreen(
 
             // OpenF1 section
             Text(
-                text = "• OpenF1 API (openf1.org)",
+                text = stringResource(R.string.about_openf1),
                 style = MaterialTheme.typography.caption3,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -50,7 +51,7 @@ fun AboutScreen(
 
             // Jolpica F1 section
             Text(
-                text = "• Jolpica F1 (api.jolpi.ca)",
+                text = stringResource(R.string.about_jolpica),
                 style = MaterialTheme.typography.caption3,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -59,7 +60,7 @@ fun AboutScreen(
             )
 
             Text(
-                text = "Jolpica F1 is an open source API providing Formula 1 data, with endpoints compatible with the Ergast API. It's maintained by volunteers and supported by donations.",
+                text = stringResource(R.string.about_jolpica_description),
                 style = MaterialTheme.typography.caption3,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -69,7 +70,7 @@ fun AboutScreen(
 
             // General disclaimer
             Text(
-                text = "The data may not be completely accurate and is subject to change. This application is for informational and entertainment purposes only.",
+                text = stringResource(R.string.about_disclaimer),
                 style = MaterialTheme.typography.caption3,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -79,7 +80,7 @@ fun AboutScreen(
 
             // Usage policy
             Text(
-                text = "Both APIs are open-source services without authentication or usage limits. Please use them responsibly.",
+                text = stringResource(R.string.about_usage_policy),
                 style = MaterialTheme.typography.caption3,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -89,7 +90,7 @@ fun AboutScreen(
 
             // Official disclaimer
             Text(
-                text = "This application is not officially associated with or endorsed by Formula 1, FIA, FOM, or any related organization.",
+                text = stringResource(R.string.about_official_disclaimer),
                 style = MaterialTheme.typography.caption3.copy(
                     color = MaterialTheme.colors.error
                 ),

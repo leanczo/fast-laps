@@ -23,7 +23,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,7 +39,9 @@ fun MainScreen(
     onAboutClick: () -> Unit,
     onPilotsClick: () -> Unit,
     onConstructorsClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    currentLang: String,
+    onLanguageChange: () -> Unit
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -76,7 +80,7 @@ fun MainScreen(
             item {
                 Chip(
                     onClick = onCircuitsClick,
-                    label = { Text("Races") },
+                    label = { Text(stringResource(R.string.races)) },
                     icon = {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
@@ -97,7 +101,7 @@ fun MainScreen(
             item {
                 Chip(
                     onClick = onPilotsClick,
-                    label = { Text("Drivers") },
+                    label = { Text(stringResource(R.string.drivers)) },
                     icon = {
                         Icon(
                             imageVector = Icons.Default.EmojiEvents,
@@ -118,7 +122,7 @@ fun MainScreen(
             item {
                 Chip(
                     onClick = onConstructorsClick,
-                    label = { Text("Teams") },
+                    label = { Text(stringResource(R.string.teams)) },
                     icon = { Icon(Icons.Default.Groups, null) },
                     colors = ChipDefaults.chipColors(
                         backgroundColor = MaterialTheme.colors.secondary,
@@ -132,8 +136,34 @@ fun MainScreen(
 
             item {
                 Chip(
+                    onClick = onLanguageChange,
+                    label = {
+                        Text(
+                            text = "${stringResource(R.string.change_to)} ${
+                                if (currentLang == "en") stringResource(R.string.spanish)
+                                else stringResource(R.string.english)
+                            }",
+                            style = MaterialTheme.typography.button
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.SwapHoriz,
+                            contentDescription = stringResource(R.string.change_language),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    },
+                    colors = ChipDefaults.secondaryChipColors(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                )
+            }
+
+            item {
+                Chip(
                     onClick = onAboutClick,
-                    label = { Text("About") },
+                    label = { Text(stringResource(R.string.about)) },
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Info,

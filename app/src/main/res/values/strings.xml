@@ -2,5 +2,26 @@
     <string name="app_name">Fast Laps</string>
     <string name="app_version">v1.62</string>
     <string name="copyright">© 2025 Leandro Cardozo</string>
+
+    <string name="races">Races</string>
+
+    <string name="drivers">Drivers</string>
+    <string name="teams">Teams</string>
+    <string name="about">About</string>
+    <string name="english">English</string>
+    <string name="spanish">Español</string>
+    <string name="change_language">Change Language</string>
+    <string name="change_to">Change to</string>
+
+    <string name="results">Results</string>
+
+    <string name="about_data_provided_by">Data provided by:</string>
+    <string name="about_openf1">• OpenF1 API (openf1.org)</string>
+    <string name="about_jolpica">• Jolpica F1 (api.jolpi.ca)</string>
+    <string name="about_jolpica_description">Jolpica F1 is an open source API providing Formula 1 data, with endpoints compatible with the Ergast API. It\'s maintained by volunteers and supported by donations.</string>
+    <string name="about_disclaimer">The data may not be completely accurate and is subject to change. This application is for informational and entertainment purposes only.</string>
+    <string name="about_usage_policy">Both APIs are open-source services without authentication or usage limits. Please use them responsibly.</string>
+    <string name="about_official_disclaimer">This application is not officially associated with or endorsed by Formula 1, FIA, FOM, or any related organization.</string>
+
 </resources>
 
