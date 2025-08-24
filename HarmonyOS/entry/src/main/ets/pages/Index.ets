@@ -84,35 +84,62 @@ struct Index {
   build() {
     Navigation(this.navPathStack) {
       Column() {
-      // Header with logo and title
-      Row() {
-        Text('🏎️')
-          .fontSize(24)
-          .margin({ right: 8 })
-        
-        Text('FastLaps')
-          .fontSize(20)
-          .fontWeight(FontWeight.Bold)
-          .fontColor('#FF6B35')
-      }
-      .width('100%')
-      .height(60)
-      .justifyContent(FlexAlign.Center)
-      .alignItems(VerticalAlign.Center)
-      .margin({ bottom: 16 })
+        // Scrollable menu that occupies full height
+        Scroll() {
+          Column({ space: 6 }) {
+            // Header with logo and title at top of scroll
+            Row() {
+              Text('🏎️')
+                .fontSize(24)
+                .margin({ right: 8 })
 
-      // Scrollable menu
-      Scroll() {
-        Column() {
-          // Main menu buttons
-          ForEach(this.menuButtons, (button: MenuButton, index: number) => {
+              Text('FastLaps')
+                .fontSize(20)
+                .fontWeight(FontWeight.Bold)
+                .fontColor('#FF6B35')
+            }
+            .width('100%')
+            .height(60)
+            .justifyContent(FlexAlign.Center)
+            .alignItems(VerticalAlign.Center)
+            .margin({ bottom: 16, top: 16 })
+
+            // Main menu buttons
+            ForEach(this.menuButtons, (button: MenuButton, index: number) => {
+              Button() {
+                Row() {
+                  Text(button.icon)
+                    .fontSize(20)
+                    .margin({ right: 12 })
+
+                  Text(button.title)
+                    .fontSize(16)
+                    .fontColor('#FFFFFF')
+                    .flexGrow(1)
+                }
+                .width('100%')
+                .height('100%')
+                .justifyContent(FlexAlign.Start)
+                .alignItems(VerticalAlign.Center)
+                .padding({ left: 16, right: 16 })
+              }
+              .width('100%')
+              .height(48)
+              .backgroundColor(button.color)
+              .borderRadius(12)
+              .onClick(() => {
+                this.navigateToPage(button.route);
+              })
+            }, (button: MenuButton, index: number) => index.toString())
+
+            // Language toggle button
             Button() {
               Row() {
-                Text(button.icon)
+                Text('🔄')
                   .fontSize(20)
                   .margin({ right: 12 })
-                
-                Text(button.title)
+
+                Text(this.getLanguageButtonText())
                   .fontSize(16)
                   .fontColor('#FFFFFF')
                   .flexGrow(1)
@@ -125,122 +152,104 @@ struct Index {
             }
             .width('100%')
             .height(56)
-            .backgroundColor(button.color)
+            .backgroundColor('#444444')
             .borderRadius(12)
-            .margin({ bottom: 12, left: 16, right: 16 })
             .onClick(() => {
-              this.navigateToPage(button.route);
+              this.toggleLanguage();
             })
-          }, (button: MenuButton, index: number) => index.toString())
 
-          // Language toggle button
-          Button() {
-            Row() {
-              Text('🔄')
-                .fontSize(20)
-                .margin({ right: 12 })
-              
-              Text(this.getLanguageButtonText())
-                .fontSize(16)
-                .fontColor('#FFFFFF')
-                .flexGrow(1)
+            // About button
+            Button() {
+              Row() {
+                Text('ℹ️')
+                  .fontSize(20)
+                  .margin({ right: 12 })
+
+                Text(this.currentLang === 'es' ? 'Acerca de' : 'About')
+                  .fontSize(16)
+                  .fontColor('#FFFFFF')
+                  .flexGrow(1)
+              }
+              .width('100%')
+              .height('100%')
+              .justifyContent(FlexAlign.Start)
+              .alignItems(VerticalAlign.Center)
+              .padding({ left: 16, right: 16 })
             }
             .width('100%')
-            .height('100%')
-            .justifyContent(FlexAlign.Start)
-            .alignItems(VerticalAlign.Center)
-            .padding({ left: 16, right: 16 })
-          }
-          .width('100%')
-          .height(56)
-          .backgroundColor('#444444')
-          .borderRadius(12)
-          .margin({ bottom: 12, left: 16, right: 16 })
-          .onClick(() => {
-            this.toggleLanguage();
-          })
+            .height(56)
+            .backgroundColor('#444444')
+            .borderRadius(12)
+            .onClick(() => {
+              this.navigateToPage('AboutPage');
+            })
 
-          // About button
-          Button() {
-            Row() {
-              Text('ℹ️')
-                .fontSize(20)
-                .margin({ right: 12 })
-              
-              Text(this.currentLang === 'es' ? 'Acerca de' : 'About')
-                .fontSize(16)
-                .fontColor('#FFFFFF')
-                .flexGrow(1)
+            // Test button for debugging
+            Button() {
+              Row() {
+                Text('🧪')
+                  .fontSize(20)
+                  .margin({ right: 12 })
+
+                Text('TEST NAVIGATION')
+                  .fontSize(16)
+                  .fontColor('#FFFFFF')
+                  .flexGrow(1)
+              }
+              .width('100%')
+              .height('100%')
+              .justifyContent(FlexAlign.Start)
+              .alignItems(VerticalAlign.Center)
+              .padding({ left: 16, right: 16 })
             }
             .width('100%')
-            .height('100%')
-            .justifyContent(FlexAlign.Start)
-            .alignItems(VerticalAlign.Center)
-            .padding({ left: 16, right: 16 })
-          }
-          .width('100%')
-          .height(56)
-          .backgroundColor('#444444')
-          .borderRadius(12)
-          .margin({ bottom: 12, left: 16, right: 16 })
-          .onClick(() => {
-            this.navigateToPage('AboutPage');
-          })
+            .height(56)
+            .backgroundColor('#00FF00')
+            .borderRadius(12)
+            .onClick(() => {
+              hilog.info(DOMAIN, 'FastLaps', 'Test button clicked! Language: %{public}s', this.currentLang);
+              this.navigateToPage('AboutPage');
+            })
 
-          // Test button for debugging
-          Button() {
-            Row() {
-              Text('🧪')
-                .fontSize(20)
-                .margin({ right: 12 })
-              
-              Text('TEST NAVIGATION')
-                .fontSize(16)
-                .fontColor('#FFFFFF')
-                .flexGrow(1)
+            // Footer inside scroll
+            Column() {
+              Text('v1.63')
+                .fontSize(12)
+                .fontColor('#999999')
+                .opacity(0.6)
+                .margin({ bottom: 4 })
+
+              Text('© 2024 FastLaps')
+                .fontSize(12)
+                .fontColor('#999999')
+                .opacity(0.6)
             }
             .width('100%')
-            .height('100%')
-            .justifyContent(FlexAlign.Start)
-            .alignItems(VerticalAlign.Center)
-            .padding({ left: 16, right: 16 })
+            .alignItems(HorizontalAlign.Center)
+            .padding({ top: 16, bottom: 8 })
           }
           .width('100%')
-          .height(56)
-          .backgroundColor('#00FF00')
-          .borderRadius(12)
-          .margin({ bottom: 12, left: 16, right: 16 })
-          .onClick(() => {
-            hilog.info(DOMAIN, 'FastLaps', 'Test button clicked! Language: %{public}s', this.currentLang);
-            this.navigateToPage('AboutPage');
+          .alignItems(HorizontalAlign.Center)
+          .padding({
+            left: 16,
+            right: 16,
+            top: 0,
+            bottom: 0
           })
+          .justifyContent(FlexAlign.Start)
+          .backgroundColor('#000000')
         }
+        .scrollable(ScrollDirection.Vertical)
+        .scrollBar(BarState.Auto)
+        .edgeEffect(EdgeEffect.Spring)
         .width('100%')
-      }
-      .flexGrow(1)
-      .width('100%')
-
-      // Footer
-      Column() {
-        Text('v1.63')
-          .fontSize(12)
-          .fontColor('#999999')
-          .opacity(0.6)
-          .margin({ bottom: 4 })
-        
-        Text('© 2024 FastLaps')
-          .fontSize(12)
-          .fontColor('#999999')
-          .opacity(0.6)
+        .height('100%') // Asegura que el Scroll ocupe toda la altura
       }
       .width('100%')
-      .alignItems(HorizontalAlign.Center)
-      .padding({ top: 8, bottom: 16, left: 16, right: 16 })
-      }
-      .width('100%')
-      .height('100%')
+      .height('100%') // Asegura que el Column principal ocupe toda la altura
       .backgroundColor('#000000')
-      .padding(16)
     }
+    .width('100%')
+    .height('100%') // Asegura que Navigation ocupe toda la pantalla
   }
 }
