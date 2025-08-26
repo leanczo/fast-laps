@@ -9,35 +9,11 @@
       }
     },
     {
-      "name": "RacesPage", 
-      "pageSourceFile": "src/main/ets/pages/RacesPage.ets",
-      "buildFunction": "RacesPageBuilder",
+      "name": "RacesScreen", 
+      "pageSourceFile": "src/main/ets/pages/RacesScreen.ets",
+      "buildFunction": "RacesScreenBuilder",
       "data": {
         "description": "Races and circuits page"
-      }
-    },
-    {
-      "name": "DriversPage",
-      "pageSourceFile": "src/main/ets/pages/DriversPage.ets", 
-      "buildFunction": "DriversPageBuilder",
-      "data": {
-        "description": "Drivers standings page"
-      }
-    },
-    {
-      "name": "TeamsPage",
-      "pageSourceFile": "src/main/ets/pages/TeamsPage.ets",
-      "buildFunction": "TeamsPageBuilder", 
-      "data": {
-        "description": "Teams/constructors standings page"
-      }
-    },
-    {
-      "name": "NewsPage",
-      "pageSourceFile": "src/main/ets/pages/NewsPage.ets",
-      "buildFunction": "NewsPageBuilder",
-      "data": {
-        "description": "F1 news page"
       }
     }
   ]
