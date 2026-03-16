@@ -1,6 +1,6 @@
 package com.example.fastlaps.presentation.presentation.component
 
-import RaceResult
+import QualifyingResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,59 +15,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Card
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 
-private fun translateStatus(status: String, lang: String): String {
-    if (lang != "es") return status
-    return when (status) {
-        "Finished" -> "Finalizado"
-        "Disqualified" -> "Descalificado"
-        "Accident" -> "Accidente"
-        "Collision" -> "Colisión"
-        "Engine" -> "Motor"
-        "Gearbox" -> "Caja de cambios"
-        "Transmission" -> "Transmisión"
-        "Clutch" -> "Embrague"
-        "Hydraulics" -> "Hidráulica"
-        "Electrical" -> "Eléctrico"
-        "Spun off" -> "Trompo"
-        "Retired" -> "Retirado"
-        "Suspension" -> "Suspensión"
-        "Brakes" -> "Frenos"
-        "Overheating" -> "Sobrecalentamiento"
-        "Ignition" -> "Encendido"
-        "Throttle" -> "Acelerador"
-        "Turbo" -> "Turbo"
-        "Lapped" -> "Doblado"
-        "Not classified" -> "No clasificado"
-        "Withdrew" -> "Se retiró"
-        "Fuel system" -> "Combustible"
-        "Oil leak" -> "Fuga de aceite"
-        "Out of fuel" -> "Sin combustible"
-        "Water leak" -> "Fuga de agua"
-        "Puncture" -> "Pinchazo"
-        "Power Unit" -> "Unidad de potencia"
-        "Damage" -> "Daño"
-        "Wheel" -> "Rueda"
-        "Did not start" -> "No largó"
-        "+1 Lap" -> "+1 Vuelta"
-        else -> {
-            val lapsMatch = Regex("^\\+(\\d+) Laps$").find(status)
-            if (lapsMatch != null) "+${lapsMatch.groupValues[1]} Vueltas"
-            else status
-        }
-    }
-}
-
 @Composable
-fun DriverPositionItem(
-    result: RaceResult,
+fun QualifyingPositionItem(
+    result: QualifyingResult,
     modifier: Modifier = Modifier
 ) {
     val positionColor = when (result.position) {
@@ -93,15 +51,11 @@ fun DriverPositionItem(
         }
     }
 
-    val lang = LocalConfiguration.current.locales[0].language
-    val isFinished = result.status == "Finished"
-    val isLapped = result.status.startsWith("+") || result.status == "Lapped"
-    val statusText = translateStatus(result.status, lang)
-
-    val statusColor = when {
-        isFinished -> MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
-        isLapped -> MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
-        else -> MaterialTheme.colors.error
+    val bestTime = when {
+        result.Q3.isNotEmpty() -> result.Q3
+        result.Q2.isNotEmpty() -> result.Q2
+        result.Q1.isNotEmpty() -> result.Q1
+        else -> ""
     }
 
     Card(
@@ -149,14 +103,14 @@ fun DriverPositionItem(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-                if (!isFinished) {
-                    Text(
-                        text = statusText,
-                        style = MaterialTheme.typography.caption2,
-                        color = statusColor,
-                        maxLines = 1
-                    )
-                }
+            }
+
+            if (bestTime.isNotEmpty()) {
+                Text(
+                    text = bestTime,
+                    style = MaterialTheme.typography.caption2,
+                    textAlign = TextAlign.End
+                )
             }
         }
     }

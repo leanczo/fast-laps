@@ -4,149 +4,139 @@ import ConstructorStanding
 import DriverStanding
 import NewsModel
 import NewsRepository
+import QualifyingResult
+import Race
+import RaceResult
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fastlaps.presentation.domain.repository.SessionRepository
-import com.example.fastlaps.presentation.model.Driver
-import com.example.fastlaps.presentation.model.FinalPosition
-import com.example.fastlaps.presentation.model.Session
 import com.example.fastlaps.presentation.repository.DriverStandingsRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
-// RaceViewModel.kt
 class RaceViewModel() : ViewModel() {
-    private val sessionRepository = SessionRepository()
+    private val currentYear = Calendar.getInstance().get(Calendar.YEAR)
     private val driverStandingsRepository = DriverStandingsRepository()
 
-    private val _finalPositions = MutableStateFlow<List<FinalPosition>>(emptyList())
-    val finalPositions: StateFlow<List<FinalPosition>> = _finalPositions.asStateFlow()
+    // Race schedule
+    private val _races = MutableStateFlow<List<Race>>(emptyList())
+    val races: StateFlow<List<Race>> = _races.asStateFlow()
 
-    private val _drivers = MutableStateFlow<List<Driver>>(emptyList())
-    val drivers: StateFlow<List<Driver>> = _drivers.asStateFlow()
+    // Race results
+    private val _raceResults = MutableStateFlow<List<RaceResult>>(emptyList())
+    val raceResults: StateFlow<List<RaceResult>> = _raceResults.asStateFlow()
 
-    private val _errorState = MutableStateFlow<String?>(null)
-    val errorState: StateFlow<String?> = _errorState.asStateFlow()
+    // Qualifying results
+    private val _qualifyingResults = MutableStateFlow<List<QualifyingResult>>(emptyList())
+    val qualifyingResults: StateFlow<List<QualifyingResult>> = _qualifyingResults.asStateFlow()
+
+    // Sprint results
+    private val _sprintResults = MutableStateFlow<List<RaceResult>>(emptyList())
+    val sprintResults: StateFlow<List<RaceResult>> = _sprintResults.asStateFlow()
+
+    // 0 = Race, 1 = Qualifying, 2 = Sprint
+    private val _selectedTab = MutableStateFlow(0)
+    val selectedTab: StateFlow<Int> = _selectedTab.asStateFlow()
+
+    private val _currentRound = MutableStateFlow<Int?>(null)
+    val currentRound: StateFlow<Int?> = _currentRound.asStateFlow()
+
+    private val _currentRaceName = MutableStateFlow<String?>(null)
+    val currentRaceName: StateFlow<String?> = _currentRaceName.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _currentSessionKey = MutableStateFlow<Int?>(null)
-    val currentSessionKey: StateFlow<Int?> = _currentSessionKey.asStateFlow()
+    private val _errorState = MutableStateFlow<String?>(null)
+    val errorState: StateFlow<String?> = _errorState.asStateFlow()
 
-    var simulateError = false
-    var simulateEmpty = false
+    init {
+        loadRaces()
+    }
 
-    fun loadSessionData(sessionKey: Int) {
-        _currentSessionKey.value = sessionKey
+    fun loadRaces() {
         viewModelScope.launch {
             _isLoading.value = true
             _errorState.value = null
             try {
-                // Cargar posiciones y pilotos en paralelo
-                val positionsDeferred = async { sessionRepository.getSessionPositions(sessionKey) }
-                val driversDeferred = async { sessionRepository.getSessionDrivers(sessionKey) }
-
-                val positions = positionsDeferred.await()
-                val drivers = driversDeferred.await()
-
-                _drivers.value = drivers
-                _finalPositions.value = sessionRepository.processFinalPositions(positions, drivers)
-
-            } catch (e: Exception) {
-                Log.e("RaceViewModel", "Error loading session data", e)
-                _finalPositions.value = emptyList()
-                _errorState.value = "Error loading session data: ${e.localizedMessage}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-
-
-    // Función mejorada para cargar sesiones
-    fun loadSessions(year: Int = 2025) {
-        viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                _errorState.value = null
-
-                if (simulateError) {
-                    throw Exception("Simulated API error")
-                }
-
-                val response = if (simulateEmpty) emptyList() else sessionRepository.getSessions(year)
-                _sessions.value = response.groupBy { it.meeting_key }
-
+                val races = driverStandingsRepository.getRaceSchedule(currentYear)
+                _races.value = races
             } catch (e: Exception) {
                 _errorState.value = when (e) {
                     is java.net.UnknownHostException -> "No internet connection"
                     is java.net.SocketTimeoutException -> "Connection timeout"
-                    else -> "Failed to load sessions: ${e.localizedMessage}"
+                    else -> "Failed to load races: ${e.localizedMessage}"
                 }
-                Log.e("RaceViewModel", "Error fetching sessions", e)
-                _sessions.value = emptyMap()
+                Log.e("RaceViewModel", "Error fetching races", e)
+                _races.value = emptyList()
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    // 1. Definición correcta de StateFlows
-    private val _sessions = MutableStateFlow<Map<Int, List<Session>>>(emptyMap())
-    val sessions: StateFlow<Map<Int, List<Session>>> = _sessions.asStateFlow()
-
-    private val _expandedMeetingKey = MutableStateFlow<Int?>(null)
-    val expandedMeetingKey: StateFlow<Int?> = _expandedMeetingKey.asStateFlow()
-
-    // 2. Función para cargar sesiones
-    fun fetchSessions() {
+    fun loadRaceResults(round: Int, raceName: String? = null) {
+        _currentRound.value = round
+        _currentRaceName.value = raceName
+        _selectedTab.value = 0
         viewModelScope.launch {
+            _isLoading.value = true
+            _errorState.value = null
             try {
-                val response = sessionRepository.getSessions(2025)
-                _sessions.value = response.groupBy { it.meeting_key }
+                val resultsDeferred = async { driverStandingsRepository.getRaceResults(currentYear, round) }
+                val qualifyingDeferred = async { driverStandingsRepository.getQualifyingResults(currentYear, round) }
+                val sprintDeferred = async {
+                    try { driverStandingsRepository.getSprintResults(currentYear, round) }
+                    catch (_: Exception) { emptyList() }
+                }
+
+                val results = resultsDeferred.await()
+                val qualifying = qualifyingDeferred.await()
+                val sprint = sprintDeferred.await()
+
+                _raceResults.value = results
+                _qualifyingResults.value = qualifying
+                _sprintResults.value = sprint
+
+                if (results.isEmpty() && qualifying.isEmpty() && sprint.isEmpty()) {
+                    _errorState.value = "No results available"
+                }
             } catch (e: Exception) {
-                Log.e("RaceViewModel", "Error fetching sessions", e)
+                Log.e("RaceViewModel", "Error loading race results", e)
+                _raceResults.value = emptyList()
+                _qualifyingResults.value = emptyList()
+                _sprintResults.value = emptyList()
+                _errorState.value = "Error loading results: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
+    fun selectTab(tab: Int) {
+        _selectedTab.value = tab
+    }
+
     fun retryLoading() {
-        loadSessions()
+        loadRaces()
     }
 
     fun setErrorState(message: String?) {
         _errorState.value = message
     }
 
-    fun getErrorState(): String? {
-        return _errorState.value
+    fun resetRaceResults() {
+        _raceResults.value = emptyList()
+        _qualifyingResults.value = emptyList()
+        _sprintResults.value = emptyList()
+        _selectedTab.value = 0
     }
 
-    // 3. Función para expandir/contraer sesiones
-    fun toggleMeetingSessions(meetingKey: Int) {
-        _expandedMeetingKey.value = if (_expandedMeetingKey.value == meetingKey) {
-            null
-        } else {
-            meetingKey
-        }
-    }
-
-    fun resetSessionResults() {
-        _finalPositions.value = emptyList()
-    }
-
-    init {
-        fetchSessions() // Cargar sesiones al inicializar
-        //loadDriverStandings()
-    }
-
-
+    // Driver standings
     private val _driverStandings = MutableStateFlow<List<DriverStanding>>(emptyList())
     val driverStandings = _driverStandings.asStateFlow()
 
@@ -160,12 +150,11 @@ class RaceViewModel() : ViewModel() {
         viewModelScope.launch {
             _isLoadingDrivers.value = true
             _driverErrorState.value = null
-
             try {
-                val response = driverStandingsRepository.getDriverStandings(2025)
-                val standings = response.MRData.StandingsTable.StandingsLists.first().DriverStandings
+                val response = driverStandingsRepository.getDriverStandings(currentYear)
+                val standings = response.MRData.StandingsTable.StandingsLists
+                    .firstOrNull()?.DriverStandings ?: emptyList()
                 _driverStandings.value = standings
-
                 if (standings.isEmpty()) {
                     _driverErrorState.value = "No driver standings available"
                 }
@@ -178,9 +167,7 @@ class RaceViewModel() : ViewModel() {
         }
     }
 
-
-
-    // Nuevos estados para constructores
+    // Constructor standings
     private val _constructorStandings = MutableStateFlow<List<ConstructorStanding>>(emptyList())
     val constructorStandings: StateFlow<List<ConstructorStanding>> = _constructorStandings.asStateFlow()
 
@@ -190,14 +177,14 @@ class RaceViewModel() : ViewModel() {
     private val _constructorErrorState = MutableStateFlow<String?>(null)
     val constructorErrorState = _constructorErrorState.asStateFlow()
 
-    // Función para cargar datos
-    fun loadConstructorStandings(year: Int = 2025) {
+    fun loadConstructorStandings(year: Int = currentYear) {
         viewModelScope.launch {
             _isLoadingConstructors.value = true
             _constructorErrorState.value = null
             try {
                 val response = driverStandingsRepository.getConstructorStandings(year)
-                _constructorStandings.value = response.MRData.StandingsTable.StandingsLists.first().ConstructorStandings
+                _constructorStandings.value = response.MRData.StandingsTable.StandingsLists
+                    .firstOrNull()?.ConstructorStandings ?: emptyList()
             } catch (e: Exception) {
                 _constructorErrorState.value = "Error loading constructor standings: ${e.localizedMessage}"
                 Log.e("RaceViewModel", "Error loading constructor standings", e)
@@ -207,6 +194,7 @@ class RaceViewModel() : ViewModel() {
         }
     }
 
+    // News
     private val newsRepository = NewsRepository()
     private val _news = MutableStateFlow<List<NewsModel>>(emptyList())
     val news: StateFlow<List<NewsModel>> = _news.asStateFlow()
@@ -217,16 +205,13 @@ class RaceViewModel() : ViewModel() {
     private val _newsErrorState = MutableStateFlow<String?>(null)
     val newsErrorState: StateFlow<String?> = _newsErrorState.asStateFlow()
 
-    // Función para cargar noticias (consistente con otras funciones)
     fun loadNews(language: String) {
         viewModelScope.launch {
             _isLoadingNews.value = true
             _newsErrorState.value = null
-
             try {
                 val newsResult = newsRepository.getF1News(language)
                 _news.value = newsResult
-
                 if (newsResult.isEmpty()) {
                     _newsErrorState.value = "No news available"
                 }
@@ -244,7 +229,6 @@ class RaceViewModel() : ViewModel() {
         }
     }
 
-    // Función para reintentar cargar noticias
     fun retryLoadingNews(language: String) {
         loadNews(language)
     }

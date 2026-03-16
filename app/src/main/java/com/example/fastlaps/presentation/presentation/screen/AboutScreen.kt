@@ -47,17 +47,6 @@ fun AboutScreen(
                     .padding(top = 8.dp, bottom = 8.dp)
             )
 
-            // OpenF1 section
-            Text(
-                text = stringResource(R.string.about_openf1),
-                style = MaterialTheme.typography.caption3,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 4.dp)
-            )
-
-            // Jolpica F1 section
             Text(
                 text = stringResource(R.string.about_jolpica),
                 style = MaterialTheme.typography.caption3,
@@ -75,7 +64,7 @@ fun AboutScreen(
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
             )
-            // General disclaimer
+
             Text(
                 text = stringResource(R.string.about_disclaimer),
                 style = MaterialTheme.typography.caption3,
@@ -85,7 +74,6 @@ fun AboutScreen(
                     .padding(bottom = 16.dp)
             )
 
-            // Usage policy
             Text(
                 text = stringResource(R.string.about_usage_policy),
                 style = MaterialTheme.typography.caption3,
@@ -136,7 +124,6 @@ fun AboutScreen(
                     .padding(bottom = 16.dp)
             )
 
-            // Official disclaimer
             Text(
                 text = stringResource(R.string.about_official_disclaimer),
                 style = MaterialTheme.typography.caption3.copy(

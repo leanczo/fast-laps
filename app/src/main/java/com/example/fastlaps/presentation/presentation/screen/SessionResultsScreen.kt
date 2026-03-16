@@ -3,10 +3,13 @@ package com.example.fastlaps.presentation.presentation.screen
 import EmptyState
 import ErrorMessage
 import LoadingIndicator
+import QualifyingResult
+import RaceResult
 import RefreshButton
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,28 +25,38 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
+import androidx.wear.compose.material.Chip
+import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
-import com.example.fastlaps.presentation.model.FinalPosition
 import com.example.fastlaps.presentation.presentation.component.DriverPositionItem
+import com.example.fastlaps.presentation.presentation.component.QualifyingPositionItem
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import com.leandro.fastlaps.R
 
 @Composable
 fun SessionResultsScreen(
-    finalPositions: List<FinalPosition>,
+    raceResults: List<RaceResult>,
+    qualifyingResults: List<QualifyingResult>,
+    sprintResults: List<RaceResult>,
+    raceName: String?,
     onBack: () -> Unit,
     viewModel: RaceViewModel
 ) {
     val errorState by viewModel.errorState.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-    val currentSessionKey by viewModel.currentSessionKey.collectAsState()
+    val currentRound by viewModel.currentRound.collectAsState()
+    val selectedTab by viewModel.selectedTab.collectAsState()
 
-    val no_session_message = stringResource(R.string.no_session);
+    val noSessionMessage = stringResource(R.string.no_session)
+
+    val hasTabs = listOf(raceResults, qualifyingResults, sprintResults).count { it.isNotEmpty() } > 1
+    val hasSprint = sprintResults.isNotEmpty()
+
     DisposableEffect(Unit) {
         onDispose {
-            viewModel.resetSessionResults()
+            viewModel.resetRaceResults()
         }
     }
 
@@ -64,22 +77,22 @@ fun SessionResultsScreen(
                         .fillMaxSize()
                         .padding(16.dp),
                     onRetry = {
-                        currentSessionKey?.let { sessionKey ->
-                            viewModel.loadSessionData(sessionKey)
+                        currentRound?.let { round ->
+                            viewModel.loadRaceResults(round)
                         } ?: run {
-                            viewModel.setErrorState(no_session_message)
+                            viewModel.setErrorState(noSessionMessage)
                         }
                     }
                 )
             }
 
-            finalPositions.isEmpty() -> {
+            raceResults.isEmpty() && qualifyingResults.isEmpty() && sprintResults.isEmpty() -> {
                 EmptyState(
                     onRetry = {
-                        currentSessionKey?.let { sessionKey ->
-                            viewModel.loadSessionData(sessionKey)
+                        currentRound?.let { round ->
+                            viewModel.loadRaceResults(round)
                         } ?: run {
-                            viewModel.setErrorState(no_session_message)
+                            viewModel.setErrorState(noSessionMessage)
                         }
                     },
                     modifier = Modifier.fillMaxSize()
@@ -87,11 +100,9 @@ fun SessionResultsScreen(
             }
 
             else -> {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+                Column(modifier = Modifier.fillMaxSize()) {
                     Text(
-                        text = stringResource(R.string.results),
+                        text = raceName ?: stringResource(R.string.results),
                         style = MaterialTheme.typography.body2,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
@@ -101,8 +112,46 @@ fun SessionResultsScreen(
 
                     ScalingLazyColumn(
                         modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
                     ) {
+                        if (hasTabs) {
+                            if (raceResults.isNotEmpty()) {
+                                item {
+                                    TabChip(
+                                        label = stringResource(R.string.race_label),
+                                        selected = selectedTab == 0,
+                                        onClick = { viewModel.selectTab(0) },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
+                            if (qualifyingResults.isNotEmpty()) {
+                                item {
+                                    TabChip(
+                                        label = stringResource(R.string.qualifying),
+                                        selected = selectedTab == 1,
+                                        onClick = { viewModel.selectTab(1) },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
+                            if (hasSprint) {
+                                item {
+                                    TabChip(
+                                        label = stringResource(R.string.sprint),
+                                        selected = selectedTab == 2,
+                                        onClick = { viewModel.selectTab(2) },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
+                        }
+
                         item {
                             Box(
                                 modifier = Modifier.fillMaxWidth(),
@@ -111,10 +160,10 @@ fun SessionResultsScreen(
                                 RefreshButton(
                                     isLoading = isLoading,
                                     onClick = {
-                                        currentSessionKey?.let { sessionKey ->
-                                            viewModel.loadSessionData(sessionKey)
+                                        currentRound?.let { round ->
+                                            viewModel.loadRaceResults(round)
                                         } ?: run {
-                                            viewModel.setErrorState(no_session_message)
+                                            viewModel.setErrorState(noSessionMessage)
                                         }
                                     },
                                     isErrorState = false,
@@ -123,15 +172,47 @@ fun SessionResultsScreen(
                             }
                         }
 
-                        items(finalPositions) { position ->
-                            DriverPositionItem(
-                                position = position,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
+                        when (selectedTab) {
+                            0 -> items(raceResults) { result ->
+                                DriverPositionItem(
+                                    result = result,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
+                            1 -> items(qualifyingResults) { result ->
+                                QualifyingPositionItem(
+                                    result = result,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
+                            2 -> items(sprintResults) { result ->
+                                DriverPositionItem(
+                                    result = result,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun TabChip(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Chip(
+        onClick = onClick,
+        label = { Text(label, style = MaterialTheme.typography.caption2) },
+        colors = if (selected) ChipDefaults.chipColors(
+            backgroundColor = MaterialTheme.colors.secondary,
+            contentColor = MaterialTheme.colors.onSecondary
+        ) else ChipDefaults.secondaryChipColors(),
+        modifier = modifier
+    )
 }

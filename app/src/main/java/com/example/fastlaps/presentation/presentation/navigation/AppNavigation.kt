@@ -18,6 +18,7 @@ fun AppNavigation(viewModel: RaceViewModel, currentLang: String, onLanguageChang
     NavHost(navController = navController, startDestination = "mainScreen") {
         composable("mainScreen") {
             MainScreen(
+                viewModel = viewModel,
                 onCircuitsClick = { navController.navigate("sessionList") },
                 onPilotsClick = { navController.navigate("pilotList") },
                 onAboutClick = { navController.navigate("about") },
@@ -29,16 +30,15 @@ fun AppNavigation(viewModel: RaceViewModel, currentLang: String, onLanguageChang
         }
 
         composable("about") {
-            AboutScreen(
-            )
+            AboutScreen()
         }
 
         composable("sessionList") {
             SessionListScreen(
                 viewModel = viewModel,
-                onSessionClick = { sessionKey ->
-                    viewModel.loadSessionData(sessionKey)
-                    navController.navigate("sessionResults/$sessionKey")
+                onRaceClick = { round, raceName ->
+                    viewModel.loadRaceResults(round, raceName)
+                    navController.navigate("raceResults/$round")
                 },
                 onBack = { navController.popBackStack() }
             )
@@ -67,12 +67,18 @@ fun AppNavigation(viewModel: RaceViewModel, currentLang: String, onLanguageChang
         }
 
         composable(
-            route = "sessionResults/{sessionKey}",
-            arguments = listOf(navArgument("sessionKey") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val finalPositions by viewModel.finalPositions.collectAsState()
+            route = "raceResults/{round}",
+            arguments = listOf(navArgument("round") { type = NavType.IntType })
+        ) {
+            val raceResults by viewModel.raceResults.collectAsState()
+            val qualifyingResults by viewModel.qualifyingResults.collectAsState()
+            val sprintResults by viewModel.sprintResults.collectAsState()
+            val raceName by viewModel.currentRaceName.collectAsState()
             SessionResultsScreen(
-                finalPositions = finalPositions,
+                raceResults = raceResults,
+                qualifyingResults = qualifyingResults,
+                sprintResults = sprintResults,
+                raceName = raceName,
                 onBack = { navController.popBackStack() },
                 viewModel = viewModel
             )

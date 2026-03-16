@@ -20,12 +20,20 @@
     <string name="open_phone">Abrir en el celular</string>
     <string name="no_session">No hay sesión seleccionada</string>
 
+    <string name="next_race">Próxima Carrera</string>
+    <string name="race_today">¡Hoy!</string>
+    <string name="race_tomorrow">Mañana</string>
+    <string name="race_in_days">en %d días</string>
+    <string name="no_upcoming_races">No hay carreras próximas</string>
+    <string name="race_label">Carrera</string>
+    <string name="qualifying">Qualy</string>
+    <string name="sprint">Sprint</string>
+
     <string name="about_data_provided_by">Datos proporcionados por:</string>
-    <string name="about_openf1">• OpenF1 API (openf1.org)</string>
     <string name="about_jolpica">• Jolpica F1 (api.jolpi.ca)</string>
     <string name="about_jolpica_description">Jolpica F1 es una API de código abierto que proporciona datos de Fórmula 1, con endpoints compatibles con la API Ergast. Es mantenida por voluntarios y apoyada por donaciones.</string>
     <string name="about_disclaimer">Los datos pueden no ser completamente precisos y están sujetos a cambios. Esta aplicación es solo para fines informativos y de entretenimiento.</string>
-    <string name="about_usage_policy">Ambas APIs son servicios de código abierto sin autenticación ni límites de uso. Por favor, úsalas de manera responsable.</string>
+    <string name="about_usage_policy">Jolpica F1 es un servicio de código abierto sin autenticación ni límites de uso. Por favor, úsalo de manera responsable.</string>
     <string name="about_official_disclaimer">Esta aplicación no está asociada oficialmente ni respaldada por la Fórmula 1, FIA, FOM o cualquier organización relacionada.</string>
     <string name="news">Noticias</string>
     <string name="news_title">Noticias F1</string>
@@ -33,4 +41,3 @@
     <string name="about_news_english">• Motorsport (inglés):</string>
     <string name="about_news_spanish">• Motorsport (español):</string>
 </resources>
-
