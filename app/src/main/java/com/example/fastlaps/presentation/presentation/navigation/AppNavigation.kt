@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.fastlaps.presentation.presentation.screen.CalendarScreen
 import com.example.fastlaps.presentation.presentation.screen.SessionResultsScreen
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 
@@ -20,6 +21,7 @@ fun AppNavigation(viewModel: RaceViewModel, currentLang: String, onLanguageChang
             MainScreen(
                 viewModel = viewModel,
                 onCircuitsClick = { navController.navigate("sessionList") },
+                onCalendarClick = { navController.navigate("calendar") },
                 onPilotsClick = { navController.navigate("pilotList") },
                 onAboutClick = { navController.navigate("about") },
                 onConstructorsClick = { navController.navigate("constructors") },
@@ -31,6 +33,17 @@ fun AppNavigation(viewModel: RaceViewModel, currentLang: String, onLanguageChang
 
         composable("about") {
             AboutScreen()
+        }
+
+        composable("calendar") {
+            CalendarScreen(
+                viewModel = viewModel,
+                onRaceClick = { round, raceName ->
+                    viewModel.loadRaceResults(round, raceName)
+                    navController.navigate("raceResults/$round")
+                },
+                onBack = { navController.popBackStack() }
+            )
         }
 
         composable("sessionList") {

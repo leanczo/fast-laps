@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Fast Laps</string>
-    <string name="app_version">v1.63</string>
+    <string name="app_version">v3.0</string>
     <string name="copyright">© 2025 Leandro Cardozo</string>
 
     <string name="races">Carreras</string>
@@ -40,4 +40,13 @@
     <string name="about_news_sources">Noticias extraídas de las siguientes fuentes:</string>
     <string name="about_news_english">• Motorsport (inglés):</string>
     <string name="about_news_spanish">• Motorsport (español):</string>
+
+    <string name="calendar">Calendario</string>
+    <string name="calendar_title">Calendario %s</string>
+
+    <string name="complication_next_race">Próxima Carrera</string>
+    <string name="complication_championship">Campeonato</string>
+
+    <string name="tile_next_race">Próxima Carrera</string>
+    <string name="tile_standings">Clasificación Pilotos</string>
 </resources>

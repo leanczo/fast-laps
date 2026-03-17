@@ -3,23 +3,31 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import com.leandro.fastlaps.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun ConstructorsScreen(
@@ -31,13 +39,17 @@ fun ConstructorsScreen(
     val isLoading by viewModel.isLoadingConstructors.collectAsState()
     val errorState by viewModel.constructorErrorState.collectAsState()
 
+    val listState = rememberScalingLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val focusRequester = remember { FocusRequester() }
+
     LaunchedEffect(Unit) {
         viewModel.loadConstructorStandings()
     }
 
     Scaffold(
         modifier = modifier,
-        positionIndicator = { PositionIndicator(scrollState = rememberScrollState()) }
+        positionIndicator = { PositionIndicator(scalingLazyListState = listState) }
     ) {
         Box(
             modifier = Modifier
@@ -52,15 +64,16 @@ fun ConstructorsScreen(
                 errorState != null -> {
                     ErrorMessage(
                         errorState = errorState,
-                        onRetry = { viewModel.loadConstructorStandings() }
+                        onRetry = { viewModel.loadConstructorStandings(forceRefresh = true) }
                     )
                 }
 
                 standings.isEmpty() -> {
-                    EmptyState(onRetry = { viewModel.loadConstructorStandings() })
+                    EmptyState(onRetry = { viewModel.loadConstructorStandings(forceRefresh = true) })
                 }
 
                 else -> {
+                    LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
                     Column(
                         modifier = Modifier.fillMaxWidth()
@@ -74,7 +87,16 @@ fun ConstructorsScreen(
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
                         )
 
-                        ScalingLazyColumn {
+                        ScalingLazyColumn(
+                            state = listState,
+                            modifier = Modifier
+                                .onRotaryScrollEvent { event ->
+                                    coroutineScope.launch { listState.scrollBy(event.verticalScrollPixels) }
+                                    true
+                                }
+                                .focusRequester(focusRequester)
+                                .focusable()
+                        ) {
 
                             item {
                                 Box(
@@ -83,7 +105,7 @@ fun ConstructorsScreen(
                                 ) {
                                     RefreshButton(
                                         isLoading = isLoading,
-                                        onClick = { viewModel.loadConstructorStandings() },
+                                        onClick = { viewModel.loadConstructorStandings(forceRefresh = true) },
                                         isErrorState = false
                                     )
                                 }

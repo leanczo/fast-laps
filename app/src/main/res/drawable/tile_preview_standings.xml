@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Dark circular background -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#1A1A1A" />
+            <size android:width="384dp" android:height="384dp" />
+        </shape>
+    </item>
+
+    <!-- Title area: "Drivers" in orange -->
+    <item
+        android:top="70dp"
+        android:left="130dp"
+        android:right="130dp"
+        android:bottom="284dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="8dp" />
+            <solid android:color="#FF9800" />
+        </shape>
+    </item>
+
+    <!-- Row 1 - Gold -->
+    <item
+        android:top="120dp"
+        android:left="80dp"
+        android:right="80dp"
+        android:bottom="242dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="#FFD700" />
+        </shape>
+    </item>
+
+    <!-- Row 2 - Silver -->
+    <item
+        android:top="150dp"
+        android:left="80dp"
+        android:right="80dp"
+        android:bottom="212dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="#C0C0C0" />
+        </shape>
+    </item>
+
+    <!-- Row 3 - Bronze -->
+    <item
+        android:top="180dp"
+        android:left="80dp"
+        android:right="80dp"
+        android:bottom="182dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="#CD7F32" />
+        </shape>
+    </item>
+
+    <!-- Row 4 - White -->
+    <item
+        android:top="210dp"
+        android:left="90dp"
+        android:right="90dp"
+        android:bottom="152dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="#CCCCCC" />
+        </shape>
+    </item>
+
+    <!-- Row 5 - White -->
+    <item
+        android:top="240dp"
+        android:left="100dp"
+        android:right="100dp"
+        android:bottom="122dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="#CCCCCC" />
+        </shape>
+    </item>
+</layer-list>

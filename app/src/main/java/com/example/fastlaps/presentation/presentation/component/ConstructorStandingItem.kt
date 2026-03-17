@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Card
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import com.example.fastlaps.presentation.util.F1Constants
 
 @Composable
 fun ConstructorStandingItem(
@@ -25,30 +26,6 @@ fun ConstructorStandingItem(
         2 -> Color(0xFFC0C0C0)
         3 -> Color(0xFFCD7F32)
         else -> MaterialTheme.colors.primary
-    }
-
-    fun getCountryFlagEmoji(nationality: String): String {
-        return when (nationality.lowercase()) {
-            "british" -> "🇬🇧"
-            "spanish" -> "🇪🇸"
-            "dutch" -> "🇳🇱"
-            "monegasque" -> "🇲🇨"
-            "australian" -> "🇦🇺"
-            "thai" -> "🇹🇭"
-            "french" -> "🇫🇷"
-            "canadian" -> "🇨🇦"
-            "japanese" -> "🇯🇵"
-            "chinese" -> "🇨🇳"
-            "german" -> "🇩🇪"
-            "italian" -> "🇮🇹"
-            "american" -> "🇺🇸"
-            "swiss" -> "🇨🇭"
-            "new zealander" -> "🇳🇿"
-            "argentine" -> "🇦🇷"
-            "brazilian" -> "🇧🇷"
-            "austrian" -> "🇦🇹"
-            else -> "🏳️"
-        }
     }
 
     Card(
@@ -81,7 +58,7 @@ fun ConstructorStandingItem(
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = getCountryFlagEmoji(standing.Constructor.nationality) + " " + standing.Constructor.nationality,
+                        text = F1Constants.nationalityFlag(standing.Constructor.nationality) + " " + standing.Constructor.nationality,
                         style = MaterialTheme.typography.caption2,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

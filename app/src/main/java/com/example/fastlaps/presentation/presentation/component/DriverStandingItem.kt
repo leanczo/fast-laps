@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Card
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import com.example.fastlaps.presentation.util.F1Constants
 
 @Composable
 fun DriverStandingItem(
@@ -34,22 +35,6 @@ fun DriverStandingItem(
         "2" -> Color(0xFFC0C0C0)
         "3" -> Color(0xFFCD7F32)
         else -> MaterialTheme.colors.primary
-    }
-
-    fun getTeamColor(constructorId: String?): Color {
-        return when (constructorId?.lowercase()) {
-            "mclaren" -> Color(0xFFF47600)
-            "red_bull" -> Color(0xFF4781D7)
-            "mercedes" -> Color(0xFF00D7B6)
-            "ferrari" -> Color(0xFFED1131)
-            "aston_martin" -> Color(0xFF229971)
-            "alpine" -> Color(0xFF00A1E8)
-            "williams" -> Color(0xFF1868DB)
-            "haas" -> Color(0xFF9C9FA2)
-            "rb", -> Color(0xFF6C98FF)
-            "sauber" -> Color(0xFF01C00E)
-            else -> Color.Gray
-        }
     }
 
     Card(
@@ -72,7 +57,7 @@ fun DriverStandingItem(
                 color = positionColor
             )
 
-            // Driver info - Column ahora está correctamente alineado
+            // Driver info
             Column(
                 modifier = Modifier.weight(1f).padding(start = 8.dp),
                 verticalArrangement = Arrangement.Center
@@ -87,14 +72,12 @@ fun DriverStandingItem(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    // Círculo de color
                     Box(
                         modifier = Modifier
                             .size(8.dp)
                             .clip(CircleShape)
-                            .background(getTeamColor(driver.Constructors.firstOrNull()?.constructorId))
+                            .background(F1Constants.teamColor(driver.Constructors.firstOrNull()?.constructorId))
                     )
-                    // Nombre del equipo
                     Text(
                         text = driver.Constructors.firstOrNull()?.name ?: "",
                         style = MaterialTheme.typography.caption2,

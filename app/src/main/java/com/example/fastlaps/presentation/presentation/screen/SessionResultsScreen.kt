@@ -16,15 +16,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.MaterialTheme
@@ -34,6 +43,7 @@ import com.example.fastlaps.presentation.presentation.component.DriverPositionIt
 import com.example.fastlaps.presentation.presentation.component.QualifyingPositionItem
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import com.leandro.fastlaps.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun SessionResultsScreen(
@@ -53,6 +63,10 @@ fun SessionResultsScreen(
 
     val hasTabs = listOf(raceResults, qualifyingResults, sprintResults).count { it.isNotEmpty() } > 1
     val hasSprint = sprintResults.isNotEmpty()
+
+    val listState = rememberScalingLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val focusRequester = remember { FocusRequester() }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -100,6 +114,8 @@ fun SessionResultsScreen(
             }
 
             else -> {
+                LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
                 Column(modifier = Modifier.fillMaxSize()) {
                     Text(
                         text = raceName ?: stringResource(R.string.results),
@@ -111,7 +127,15 @@ fun SessionResultsScreen(
                     )
 
                     ScalingLazyColumn(
-                        modifier = Modifier.weight(1f),
+                        state = listState,
+                        modifier = Modifier
+                            .weight(1f)
+                            .onRotaryScrollEvent { event ->
+                                coroutineScope.launch { listState.scrollBy(event.verticalScrollPixels) }
+                                true
+                            }
+                            .focusRequester(focusRequester)
+                            .focusable(),
                     ) {
                         if (hasTabs) {
                             if (raceResults.isNotEmpty()) {

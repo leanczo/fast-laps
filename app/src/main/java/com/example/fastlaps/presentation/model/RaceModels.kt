@@ -18,9 +18,19 @@ data class Race(
     val Circuit: RaceCircuit = RaceCircuit(),
     val date: String = "",
     val time: String = "",
+    val FirstPractice: SessionTime? = null,
+    val SecondPractice: SessionTime? = null,
+    val ThirdPractice: SessionTime? = null,
+    val Qualifying: SessionTime? = null,
+    val Sprint: SessionTime? = null,
     val Results: List<RaceResult> = emptyList(),
     val QualifyingResults: List<QualifyingResult> = emptyList(),
     val SprintResults: List<RaceResult> = emptyList()
+)
+
+data class SessionTime(
+    val date: String = "",
+    val time: String = ""
 )
 
 data class RaceCircuit(

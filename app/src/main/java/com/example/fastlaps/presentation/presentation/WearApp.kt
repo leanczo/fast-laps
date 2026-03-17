@@ -44,16 +44,11 @@ fun WearApp() {
         }
     )
 
-    val toggleLanguage = {
+    val toggleLanguage: () -> Unit = {
         val newLang = if (currentLang == "en") "es" else "en"
         prefs.edit() { putString("language", newLang) }
         currentLang = newLang
-        val activity = context as? Activity
-        if (activity != null) {
-            activity.recreate()
-        } else {
-            throw IllegalStateException("Unable to recreate activity")
-        }
+        (context as? Activity)?.recreate()
     }
 
     FastlapsTheme {

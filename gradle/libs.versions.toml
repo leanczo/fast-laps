@@ -15,6 +15,11 @@ composeRuntime = "1.8.1"
 rssparser = "6.0.7"
 wearRemoteInteractions = "1.0.0"
 wearInput = "1.0.0"
+wearTiles = "1.4.0"
+protolayout = "1.2.0"
+concurrentFutures = "1.2.0"
+watchfaceComplications = "1.2.0"
+workRuntime = "2.10.0"
 
 [libraries]
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
@@ -40,6 +45,13 @@ material-icons-extended = { group = "androidx.compose.material", name = "materia
 rssparser = { group = "com.prof18.rssparser", name = "rssparser", version.ref = "rssparser" }
 wear-remote-interactions = { group = "androidx.wear", name = "wear-remote-interactions", version.ref = "wearRemoteInteractions" }
 wear-input = { group = "androidx.wear", name = "wear-input", version.ref = "wearInput" }
+wear-tiles = { group = "androidx.wear.tiles", name = "tiles", version.ref = "wearTiles" }
+protolayout = { group = "androidx.wear.protolayout", name = "protolayout", version.ref = "protolayout" }
+protolayout-material = { group = "androidx.wear.protolayout", name = "protolayout-material", version.ref = "protolayout" }
+protolayout-expression = { group = "androidx.wear.protolayout", name = "protolayout-expression", version.ref = "protolayout" }
+concurrent-futures = { group = "androidx.concurrent", name = "concurrent-futures", version.ref = "concurrentFutures" }
+wear-complications-data-source-ktx = { group = "androidx.wear.watchface", name = "watchface-complications-data-source-ktx", version.ref = "watchfaceComplications" }
+work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

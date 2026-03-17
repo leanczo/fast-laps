@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Dark circular background -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#1A1A1A" />
+            <size android:width="384dp" android:height="384dp" />
+        </shape>
+    </item>
+
+    <!-- Top label area: "Next Race" -->
+    <item
+        android:top="90dp"
+        android:left="100dp"
+        android:right="100dp"
+        android:bottom="264dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="8dp" />
+            <solid android:color="#444444" />
+        </shape>
+    </item>
+
+    <!-- Center: Race flag/name area -->
+    <item
+        android:top="140dp"
+        android:left="60dp"
+        android:right="60dp"
+        android:bottom="194dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="8dp" />
+            <solid android:color="#FFFFFF" />
+        </shape>
+    </item>
+
+    <!-- Bottom: Countdown in orange -->
+    <item
+        android:top="210dp"
+        android:left="110dp"
+        android:right="110dp"
+        android:bottom="144dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="8dp" />
+            <solid android:color="#FF9800" />
+        </shape>
+    </item>
+
+    <!-- Checkered flag icon top-center -->
+    <item
+        android:top="50dp"
+        android:left="172dp"
+        android:right="172dp"
+        android:bottom="294dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="#FF9800" />
+        </shape>
+    </item>
+</layer-list>

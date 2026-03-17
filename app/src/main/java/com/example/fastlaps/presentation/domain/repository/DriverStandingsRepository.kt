@@ -17,7 +17,7 @@ class DriverStandingsRepository {
 
     suspend fun getProcessedDriverStandings(year: Int): List<DriverStanding> {
         val response = getDriverStandings(year)
-        return response.MRData.StandingsTable.StandingsLists.first().DriverStandings
+        return response.MRData.StandingsTable.StandingsLists.firstOrNull()?.DriverStandings ?: emptyList()
     }
 
     suspend fun getTopDrivers(year: Int, count: Int): List<DriverStanding> {

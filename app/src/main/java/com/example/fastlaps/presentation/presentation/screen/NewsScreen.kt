@@ -8,17 +8,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import com.leandro.fastlaps.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun NewsScreen(
@@ -30,6 +39,10 @@ fun NewsScreen(
     val news by viewModel.news.collectAsState()
     val isLoading by viewModel.isLoadingNews.collectAsState()
     val errorState by viewModel.newsErrorState.collectAsState()
+
+    val listState = rememberScalingLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(currentLang) {
         viewModel.loadNews(currentLang)
@@ -58,6 +71,8 @@ fun NewsScreen(
             }
 
             else -> {
+                LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -71,7 +86,15 @@ fun NewsScreen(
                     )
 
                     ScalingLazyColumn(
-                        modifier = Modifier.fillMaxSize()
+                        state = listState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .onRotaryScrollEvent { event ->
+                                coroutineScope.launch { listState.scrollBy(event.verticalScrollPixels) }
+                                true
+                            }
+                            .focusRequester(focusRequester)
+                            .focusable()
                     ) {
                         item {
                             Box(

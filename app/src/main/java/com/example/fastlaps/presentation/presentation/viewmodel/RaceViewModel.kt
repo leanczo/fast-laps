@@ -22,6 +22,23 @@ class RaceViewModel() : ViewModel() {
     private val currentYear = Calendar.getInstance().get(Calendar.YEAR)
     private val driverStandingsRepository = DriverStandingsRepository()
 
+    // Cache timestamps
+    private var racesLastFetched = 0L
+    private var driverStandingsLastFetched = 0L
+    private var constructorStandingsLastFetched = 0L
+    private var newsLastFetched = 0L
+    private var newsLastLanguage: String? = null
+
+    companion object {
+        private const val CACHE_RACES_MS = 30 * 60 * 1000L
+        private const val CACHE_STANDINGS_MS = 10 * 60 * 1000L
+        private const val CACHE_NEWS_MS = 5 * 60 * 1000L
+    }
+
+    private fun isCacheValid(lastFetched: Long, durationMs: Long): Boolean {
+        return System.currentTimeMillis() - lastFetched < durationMs
+    }
+
     // Race schedule
     private val _races = MutableStateFlow<List<Race>>(emptyList())
     val races: StateFlow<List<Race>> = _races.asStateFlow()
@@ -58,13 +75,15 @@ class RaceViewModel() : ViewModel() {
         loadRaces()
     }
 
-    fun loadRaces() {
+    fun loadRaces(forceRefresh: Boolean = false) {
+        if (!forceRefresh && _races.value.isNotEmpty() && isCacheValid(racesLastFetched, CACHE_RACES_MS)) return
         viewModelScope.launch {
             _isLoading.value = true
             _errorState.value = null
             try {
                 val races = driverStandingsRepository.getRaceSchedule(currentYear)
                 _races.value = races
+                racesLastFetched = System.currentTimeMillis()
             } catch (e: Exception) {
                 _errorState.value = when (e) {
                     is java.net.UnknownHostException -> "No internet connection"
@@ -122,7 +141,7 @@ class RaceViewModel() : ViewModel() {
     }
 
     fun retryLoading() {
-        loadRaces()
+        loadRaces(forceRefresh = true)
     }
 
     fun setErrorState(message: String?) {
@@ -146,7 +165,8 @@ class RaceViewModel() : ViewModel() {
     private val _driverErrorState = MutableStateFlow<String?>(null)
     val driverErrorState = _driverErrorState.asStateFlow()
 
-    fun loadDriverStandings() {
+    fun loadDriverStandings(forceRefresh: Boolean = false) {
+        if (!forceRefresh && _driverStandings.value.isNotEmpty() && isCacheValid(driverStandingsLastFetched, CACHE_STANDINGS_MS)) return
         viewModelScope.launch {
             _isLoadingDrivers.value = true
             _driverErrorState.value = null
@@ -155,6 +175,7 @@ class RaceViewModel() : ViewModel() {
                 val standings = response.MRData.StandingsTable.StandingsLists
                     .firstOrNull()?.DriverStandings ?: emptyList()
                 _driverStandings.value = standings
+                driverStandingsLastFetched = System.currentTimeMillis()
                 if (standings.isEmpty()) {
                     _driverErrorState.value = "No driver standings available"
                 }
@@ -177,7 +198,8 @@ class RaceViewModel() : ViewModel() {
     private val _constructorErrorState = MutableStateFlow<String?>(null)
     val constructorErrorState = _constructorErrorState.asStateFlow()
 
-    fun loadConstructorStandings(year: Int = currentYear) {
+    fun loadConstructorStandings(year: Int = currentYear, forceRefresh: Boolean = false) {
+        if (!forceRefresh && _constructorStandings.value.isNotEmpty() && isCacheValid(constructorStandingsLastFetched, CACHE_STANDINGS_MS)) return
         viewModelScope.launch {
             _isLoadingConstructors.value = true
             _constructorErrorState.value = null
@@ -185,6 +207,7 @@ class RaceViewModel() : ViewModel() {
                 val response = driverStandingsRepository.getConstructorStandings(year)
                 _constructorStandings.value = response.MRData.StandingsTable.StandingsLists
                     .firstOrNull()?.ConstructorStandings ?: emptyList()
+                constructorStandingsLastFetched = System.currentTimeMillis()
             } catch (e: Exception) {
                 _constructorErrorState.value = "Error loading constructor standings: ${e.localizedMessage}"
                 Log.e("RaceViewModel", "Error loading constructor standings", e)
@@ -205,13 +228,16 @@ class RaceViewModel() : ViewModel() {
     private val _newsErrorState = MutableStateFlow<String?>(null)
     val newsErrorState: StateFlow<String?> = _newsErrorState.asStateFlow()
 
-    fun loadNews(language: String) {
+    fun loadNews(language: String, forceRefresh: Boolean = false) {
+        if (!forceRefresh && _news.value.isNotEmpty() && newsLastLanguage == language && isCacheValid(newsLastFetched, CACHE_NEWS_MS)) return
         viewModelScope.launch {
             _isLoadingNews.value = true
             _newsErrorState.value = null
             try {
                 val newsResult = newsRepository.getF1News(language)
                 _news.value = newsResult
+                newsLastFetched = System.currentTimeMillis()
+                newsLastLanguage = language
                 if (newsResult.isEmpty()) {
                     _newsErrorState.value = "No news available"
                 }
@@ -230,6 +256,6 @@ class RaceViewModel() : ViewModel() {
     }
 
     fun retryLoadingNews(language: String) {
-        loadNews(language)
+        loadNews(language, forceRefresh = true)
     }
 }

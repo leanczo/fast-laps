@@ -14,15 +14,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Card
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
@@ -38,44 +48,17 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
+import com.example.fastlaps.presentation.util.F1Constants
 import com.leandro.fastlaps.R
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-
-private fun countryFlag(country: String): String {
-    return when (country) {
-        "Australia" -> "\uD83C\uDDE6\uD83C\uDDFA"
-        "China" -> "\uD83C\uDDE8\uD83C\uDDF3"
-        "Japan" -> "\uD83C\uDDEF\uD83C\uDDF5"
-        "Bahrain" -> "\uD83C\uDDE7\uD83C\uDDED"
-        "Saudi Arabia" -> "\uD83C\uDDF8\uD83C\uDDE6"
-        "USA" -> "\uD83C\uDDFA\uD83C\uDDF8"
-        "Canada" -> "\uD83C\uDDE8\uD83C\uDDE6"
-        "Monaco" -> "\uD83C\uDDF2\uD83C\uDDE8"
-        "Spain" -> "\uD83C\uDDEA\uD83C\uDDF8"
-        "Austria" -> "\uD83C\uDDE6\uD83C\uDDF9"
-        "UK" -> "\uD83C\uDDEC\uD83C\uDDE7"
-        "Belgium" -> "\uD83C\uDDE7\uD83C\uDDEA"
-        "Hungary" -> "\uD83C\uDDED\uD83C\uDDFA"
-        "Netherlands" -> "\uD83C\uDDF3\uD83C\uDDF1"
-        "Italy" -> "\uD83C\uDDEE\uD83C\uDDF9"
-        "Azerbaijan" -> "\uD83C\uDDE6\uD83C\uDDFF"
-        "Singapore" -> "\uD83C\uDDF8\uD83C\uDDEC"
-        "Mexico" -> "\uD83C\uDDF2\uD83C\uDDFD"
-        "Brazil" -> "\uD83C\uDDE7\uD83C\uDDF7"
-        "Qatar" -> "\uD83C\uDDF6\uD83C\uDDE6"
-        "UAE" -> "\uD83C\uDDE6\uD83C\uDDEA"
-        "Portugal" -> "\uD83C\uDDF5\uD83C\uDDF9"
-        "France" -> "\uD83C\uDDEB\uD83C\uDDF7"
-        "Germany" -> "\uD83C\uDDE9\uD83C\uDDEA"
-        else -> "\uD83C\uDFC1"
-    }
-}
 
 @Composable
 fun MainScreen(
     viewModel: RaceViewModel,
     onCircuitsClick: () -> Unit,
+    onCalendarClick: () -> Unit,
     onAboutClick: () -> Unit,
     onPilotsClick: () -> Unit,
     onNewsClick: () -> Unit,
@@ -90,11 +73,25 @@ fun MainScreen(
         try { LocalDate.parse(it.date) >= today } catch (_: Exception) { false }
     }
 
+    val listState = rememberScalingLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
     ) {
         ScalingLazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            state = listState,
+            modifier = Modifier
+                .fillMaxSize()
+                .onRotaryScrollEvent { event ->
+                    coroutineScope.launch { listState.scrollBy(event.verticalScrollPixels) }
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -138,6 +135,27 @@ fun MainScreen(
                     icon = {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    },
+                    colors = ChipDefaults.chipColors(
+                        backgroundColor = MaterialTheme.colors.secondary,
+                        contentColor = MaterialTheme.colors.onSecondary
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                )
+            }
+
+            item {
+                Chip(
+                    onClick = onCalendarClick,
+                    label = { Text(stringResource(R.string.calendar)) },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
                             contentDescription = null,
                             modifier = Modifier.size(20.dp)
                         )
@@ -282,7 +300,7 @@ fun MainScreen(
 private fun NextRaceCard(race: Race, today: LocalDate, onClick: () -> Unit) {
     val raceDate = LocalDate.parse(race.date)
     val daysUntil = ChronoUnit.DAYS.between(today, raceDate)
-    val flag = countryFlag(race.Circuit.Location.country)
+    val flag = F1Constants.countryFlag(race.Circuit.Location.country)
     val name = race.raceName.replace(" Grand Prix", "")
 
     val countdownText = when (daysUntil) {

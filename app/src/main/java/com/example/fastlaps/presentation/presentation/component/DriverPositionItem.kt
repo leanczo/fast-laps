@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Card
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import com.example.fastlaps.presentation.util.F1Constants
 
 private fun translateStatus(status: String, lang: String): String {
     if (lang != "es") return status
@@ -77,22 +78,6 @@ fun DriverPositionItem(
         else -> MaterialTheme.colors.primary
     }
 
-    fun getTeamColor(constructorId: String): Color {
-        return when (constructorId.lowercase()) {
-            "mclaren" -> Color(0xFFF47600)
-            "red_bull" -> Color(0xFF4781D7)
-            "mercedes" -> Color(0xFF00D7B6)
-            "ferrari" -> Color(0xFFED1131)
-            "aston_martin" -> Color(0xFF229971)
-            "alpine" -> Color(0xFF00A1E8)
-            "williams" -> Color(0xFF1868DB)
-            "haas" -> Color(0xFF9C9FA2)
-            "rb" -> Color(0xFF6C98FF)
-            "sauber" -> Color(0xFF01C00E)
-            else -> Color.Gray
-        }
-    }
-
     val lang = LocalConfiguration.current.locales[0].language
     val isFinished = result.status == "Finished"
     val isLapped = result.status.startsWith("+") || result.status == "Lapped"
@@ -140,7 +125,7 @@ fun DriverPositionItem(
                         modifier = Modifier
                             .size(8.dp)
                             .clip(CircleShape)
-                            .background(getTeamColor(result.Constructor.constructorId))
+                            .background(F1Constants.teamColor(result.Constructor.constructorId))
                     )
                     Text(
                         text = result.Constructor.name,
