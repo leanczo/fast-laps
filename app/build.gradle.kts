@@ -12,8 +12,8 @@ android {
         applicationId = "com.leandro.fastlaps"
         minSdk = 30
         targetSdk = 35
-        versionCode = 14
-        versionName = "3.0"
+        versionCode = 15
+        versionName = "4.0"
         wearAppUnbundled=true
     }
 
@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.concurrent.futures)
     implementation(libs.wear.complications.data.source.ktx)
     implementation(libs.work.runtime.ktx)
+    implementation(libs.coil.compose)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)

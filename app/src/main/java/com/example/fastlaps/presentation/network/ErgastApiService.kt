@@ -35,4 +35,34 @@ interface ErgastApiService {
         @Path("year") year: Int,
         @Path("round") round: Int
     ): RaceTableResponse
+
+    @GET("f1/{year}/drivers/{driverId}/results.json")
+    suspend fun getDriverSeasonResults(
+        @Path("year") year: Int,
+        @Path("driverId") driverId: String
+    ): RaceTableResponse
+
+    @GET("f1/{year}/results.json?limit=500")
+    suspend fun getAllSeasonResults(
+        @Path("year") year: Int
+    ): RaceTableResponse
+
+    @GET("f1/{year}/{round}/laps/{lap}.json")
+    suspend fun getSingleLap(
+        @Path("year") year: Int,
+        @Path("round") round: Int,
+        @Path("lap") lap: Int
+    ): RaceTableResponse
+
+    @GET("f1/{year}/{round}/pitstops.json?limit=100")
+    suspend fun getPitStops(
+        @Path("year") year: Int,
+        @Path("round") round: Int
+    ): RaceTableResponse
+
+    @GET("f1/{year}/constructors/{constructorId}/results.json")
+    suspend fun getConstructorSeasonResults(
+        @Path("year") year: Int,
+        @Path("constructorId") constructorId: String
+    ): RaceTableResponse
 }

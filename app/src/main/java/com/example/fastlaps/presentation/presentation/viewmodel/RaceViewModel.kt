@@ -4,6 +4,8 @@ import ConstructorStanding
 import DriverStanding
 import NewsModel
 import NewsRepository
+import Lap
+import PitStop
 import QualifyingResult
 import Race
 import RaceResult
@@ -11,7 +13,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fastlaps.presentation.repository.DriverStandingsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,6 +59,10 @@ class RaceViewModel() : ViewModel() {
     private val _sprintResults = MutableStateFlow<List<RaceResult>>(emptyList())
     val sprintResults: StateFlow<List<RaceResult>> = _sprintResults.asStateFlow()
 
+    // Pit stops
+    private val _pitStops = MutableStateFlow<List<PitStop>>(emptyList())
+    val pitStops: StateFlow<List<PitStop>> = _pitStops.asStateFlow()
+
     // 0 = Race, 1 = Qualifying, 2 = Sprint
     private val _selectedTab = MutableStateFlow(0)
     val selectedTab: StateFlow<Int> = _selectedTab.asStateFlow()
@@ -64,6 +72,91 @@ class RaceViewModel() : ViewModel() {
 
     private val _currentRaceName = MutableStateFlow<String?>(null)
     val currentRaceName: StateFlow<String?> = _currentRaceName.asStateFlow()
+
+    private val _currentCircuitId = MutableStateFlow<String?>(null)
+    val currentCircuitId: StateFlow<String?> = _currentCircuitId.asStateFlow()
+
+    // Race replay - load one lap at a time
+    private val _currentLapData = MutableStateFlow<Lap?>(null)
+    val currentLapData: StateFlow<Lap?> = _currentLapData.asStateFlow()
+
+    private val _prevLapData = MutableStateFlow<Lap?>(null)
+    val prevLapData: StateFlow<Lap?> = _prevLapData.asStateFlow()
+
+    private val _isLoadingLaps = MutableStateFlow(false)
+    val isLoadingLaps: StateFlow<Boolean> = _isLoadingLaps.asStateFlow()
+
+    private val _currentLap = MutableStateFlow(1)
+    val currentLap: StateFlow<Int> = _currentLap.asStateFlow()
+
+    private val _totalLaps = MutableStateFlow(0)
+    val totalLaps: StateFlow<Int> = _totalLaps.asStateFlow()
+
+    private var _replayRound = 0
+
+    fun initReplay(round: Int) {
+        _replayRound = round
+        _currentLap.value = 1
+        val lapsFromResults = _raceResults.value.firstOrNull()?.laps?.toIntOrNull()
+        _totalLaps.value = if (lapsFromResults != null && lapsFromResults > 0) lapsFromResults else 70
+        Log.d("RaceViewModel", "initReplay round=$round totalLaps=${_totalLaps.value}")
+        loadLap(1)
+    }
+
+    fun changeLap(delta: Int) {
+        if (_isLoadingLaps.value) return
+        val max = _totalLaps.value.coerceAtLeast(1)
+        val newLap = (_currentLap.value + delta).coerceIn(1, max)
+        if (newLap != _currentLap.value) {
+            _currentLap.value = newLap
+            loadLap(newLap)
+        }
+    }
+
+    private fun loadLap(lap: Int) {
+        viewModelScope.launch {
+            _isLoadingLaps.value = true
+            try {
+                val current = withContext(Dispatchers.IO) {
+                    driverStandingsRepository.getSingleLap(currentYear, _replayRound, lap)
+                }
+                val prev = if (lap > 1) {
+                    withContext(Dispatchers.IO) {
+                        driverStandingsRepository.getSingleLap(currentYear, _replayRound, lap - 1)
+                    }
+                } else null
+                _currentLapData.value = current
+                _prevLapData.value = prev
+            } catch (e: Exception) {
+                Log.e("RaceViewModel", "Error loading lap $lap", e)
+                _currentLapData.value = null
+            } finally {
+                _isLoadingLaps.value = false
+            }
+        }
+    }
+
+    // All season results (for fastest laps)
+    private val _allSeasonResults = MutableStateFlow<List<Race>>(emptyList())
+    val allSeasonResults: StateFlow<List<Race>> = _allSeasonResults.asStateFlow()
+
+    private val _isLoadingFastestLaps = MutableStateFlow(false)
+    val isLoadingFastestLaps: StateFlow<Boolean> = _isLoadingFastestLaps.asStateFlow()
+
+    fun loadAllSeasonResults() {
+        if (_allSeasonResults.value.isNotEmpty()) return
+        viewModelScope.launch {
+            _isLoadingFastestLaps.value = true
+            try {
+                val response = driverStandingsRepository.getAllSeasonResults(currentYear)
+                _allSeasonResults.value = response
+            } catch (e: Exception) {
+                Log.e("RaceViewModel", "Error loading all season results", e)
+            } finally {
+                _isLoadingFastestLaps.value = false
+            }
+        }
+    }
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -101,6 +194,7 @@ class RaceViewModel() : ViewModel() {
     fun loadRaceResults(round: Int, raceName: String? = null) {
         _currentRound.value = round
         _currentRaceName.value = raceName
+        _currentCircuitId.value = _races.value.find { it.round == round.toString() }?.Circuit?.circuitId
         _selectedTab.value = 0
         viewModelScope.launch {
             _isLoading.value = true
@@ -112,14 +206,20 @@ class RaceViewModel() : ViewModel() {
                     try { driverStandingsRepository.getSprintResults(currentYear, round) }
                     catch (_: Exception) { emptyList() }
                 }
+                val pitStopsDeferred = async {
+                    try { driverStandingsRepository.getPitStops(currentYear, round) }
+                    catch (_: Exception) { emptyList() }
+                }
 
                 val results = resultsDeferred.await()
                 val qualifying = qualifyingDeferred.await()
                 val sprint = sprintDeferred.await()
+                val pitStops = pitStopsDeferred.await()
 
                 _raceResults.value = results
                 _qualifyingResults.value = qualifying
                 _sprintResults.value = sprint
+                _pitStops.value = pitStops
 
                 if (results.isEmpty() && qualifying.isEmpty() && sprint.isEmpty()) {
                     _errorState.value = "No results available"
@@ -152,7 +252,35 @@ class RaceViewModel() : ViewModel() {
         _raceResults.value = emptyList()
         _qualifyingResults.value = emptyList()
         _sprintResults.value = emptyList()
+        _pitStops.value = emptyList()
         _selectedTab.value = 0
+        _currentCircuitId.value = null
+    }
+
+    // Driver detail
+    private val _selectedDriver = MutableStateFlow<DriverStanding?>(null)
+    val selectedDriver: StateFlow<DriverStanding?> = _selectedDriver.asStateFlow()
+
+    private val _driverSeasonResults = MutableStateFlow<List<Race>>(emptyList())
+    val driverSeasonResults: StateFlow<List<Race>> = _driverSeasonResults.asStateFlow()
+
+    private val _isLoadingDriverDetail = MutableStateFlow(false)
+    val isLoadingDriverDetail: StateFlow<Boolean> = _isLoadingDriverDetail.asStateFlow()
+
+    fun loadDriverDetail(driverId: String) {
+        _selectedDriver.value = _driverStandings.value.find { it.Driver.driverId == driverId }
+        viewModelScope.launch {
+            _isLoadingDriverDetail.value = true
+            try {
+                val results = driverStandingsRepository.getDriverSeasonResults(currentYear, driverId)
+                _driverSeasonResults.value = results
+            } catch (e: Exception) {
+                Log.e("RaceViewModel", "Error loading driver results", e)
+                _driverSeasonResults.value = emptyList()
+            } finally {
+                _isLoadingDriverDetail.value = false
+            }
+        }
     }
 
     // Driver standings
@@ -184,6 +312,78 @@ class RaceViewModel() : ViewModel() {
                 Log.e("RaceViewModel", "Error loading driver standings", e)
             } finally {
                 _isLoadingDrivers.value = false
+            }
+        }
+    }
+
+    // Head to head
+    private val _h2hDriver1Results = MutableStateFlow<List<Race>>(emptyList())
+    val h2hDriver1Results: StateFlow<List<Race>> = _h2hDriver1Results.asStateFlow()
+
+    private val _h2hDriver2Results = MutableStateFlow<List<Race>>(emptyList())
+    val h2hDriver2Results: StateFlow<List<Race>> = _h2hDriver2Results.asStateFlow()
+
+    private val _isLoadingH2H = MutableStateFlow(false)
+    val isLoadingH2H: StateFlow<Boolean> = _isLoadingH2H.asStateFlow()
+
+    fun loadHeadToHead(constructorId: String) {
+        val teamDrivers = _driverStandings.value.filter {
+            it.Constructors.any { c -> c.constructorId == constructorId }
+        }
+        _constructorDrivers.value = teamDrivers
+        if (teamDrivers.size < 2) return
+
+        viewModelScope.launch {
+            _isLoadingH2H.value = true
+            try {
+                val d1 = async { driverStandingsRepository.getDriverSeasonResults(currentYear, teamDrivers[0].Driver.driverId) }
+                val d2 = async { driverStandingsRepository.getDriverSeasonResults(currentYear, teamDrivers[1].Driver.driverId) }
+                _h2hDriver1Results.value = d1.await()
+                _h2hDriver2Results.value = d2.await()
+            } catch (e: Exception) {
+                Log.e("RaceViewModel", "Error loading H2H", e)
+                _h2hDriver1Results.value = emptyList()
+                _h2hDriver2Results.value = emptyList()
+            } finally {
+                _isLoadingH2H.value = false
+            }
+        }
+    }
+
+    // Constructor detail
+    private val _selectedConstructor = MutableStateFlow<ConstructorStanding?>(null)
+    val selectedConstructor: StateFlow<ConstructorStanding?> = _selectedConstructor.asStateFlow()
+
+    private val _constructorSeasonResults = MutableStateFlow<List<Race>>(emptyList())
+    val constructorSeasonResults: StateFlow<List<Race>> = _constructorSeasonResults.asStateFlow()
+
+    private val _constructorDrivers = MutableStateFlow<List<DriverStanding>>(emptyList())
+    val constructorDrivers: StateFlow<List<DriverStanding>> = _constructorDrivers.asStateFlow()
+
+    private val _isLoadingConstructorDetail = MutableStateFlow(false)
+    val isLoadingConstructorDetail: StateFlow<Boolean> = _isLoadingConstructorDetail.asStateFlow()
+
+    fun loadConstructorDetail(constructorId: String) {
+        _selectedConstructor.value = _constructorStandings.value.find { it.Constructor.constructorId == constructorId }
+        viewModelScope.launch {
+            _isLoadingConstructorDetail.value = true
+            try {
+                // Ensure driver standings are loaded for the drivers section
+                if (_driverStandings.value.isEmpty()) {
+                    val response = driverStandingsRepository.getDriverStandings(currentYear)
+                    _driverStandings.value = response.MRData.StandingsTable.StandingsLists
+                        .firstOrNull()?.DriverStandings ?: emptyList()
+                }
+                _constructorDrivers.value = _driverStandings.value.filter {
+                    it.Constructors.any { c -> c.constructorId == constructorId }
+                }
+                val results = driverStandingsRepository.getConstructorSeasonResults(currentYear, constructorId)
+                _constructorSeasonResults.value = results
+            } catch (e: Exception) {
+                Log.e("RaceViewModel", "Error loading constructor results", e)
+                _constructorSeasonResults.value = emptyList()
+            } finally {
+                _isLoadingConstructorDetail.value = false
             }
         }
     }

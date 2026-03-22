@@ -2,13 +2,16 @@ package com.example.fastlaps.presentation.complication
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.graphics.drawable.Icon
 import androidx.wear.watchface.complications.data.ComplicationData
 import androidx.wear.watchface.complications.data.ComplicationType
 import androidx.wear.watchface.complications.data.LongTextComplicationData
+import androidx.wear.watchface.complications.data.MonochromaticImage
 import androidx.wear.watchface.complications.data.PlainComplicationText
 import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
+import com.leandro.fastlaps.R
 import com.example.fastlaps.presentation.MainActivity
 import com.example.fastlaps.presentation.repository.DriverStandingsRepository
 import java.util.Calendar
@@ -16,6 +19,10 @@ import java.util.Calendar
 class ChampionshipComplicationService : SuspendingComplicationDataSourceService() {
 
     private val repository = DriverStandingsRepository()
+
+    private fun complicationIcon() = MonochromaticImage.Builder(
+        Icon.createWithResource(this, R.drawable.ic_complication_trophy)
+    ).build()
 
     override suspend fun onComplicationRequest(
         request: ComplicationRequest
@@ -39,6 +46,7 @@ class ChampionshipComplicationService : SuspendingComplicationDataSourceService(
                         contentDescription = PlainComplicationText.Builder("$fullName P1 $points points").build()
                     )
                         .setTitle(PlainComplicationText.Builder("$code P1").build())
+                        .setMonochromaticImage(complicationIcon())
                         .setTapAction(tapAction)
                         .build()
 
@@ -47,6 +55,7 @@ class ChampionshipComplicationService : SuspendingComplicationDataSourceService(
                         contentDescription = PlainComplicationText.Builder("Championship leader").build()
                     )
                         .setTitle(PlainComplicationText.Builder("Championship").build())
+                        .setMonochromaticImage(complicationIcon())
                         .setTapAction(tapAction)
                         .build()
 

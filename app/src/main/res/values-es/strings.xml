@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Fast Laps</string>
-    <string name="app_version">v3.0</string>
+    <string name="app_version">v4.0</string>
     <string name="copyright">© 2025 Leandro Cardozo</string>
 
     <string name="races">Carreras</string>
@@ -12,6 +12,7 @@
     <string name="change_language">Cambiar idioma</string>
     <string name="change_to">Cambiar a</string>
     <string name="results">Resultados</string>
+    <string name="fastest_laps">Vueltas Rápidas</string>
 
     <string name="retry">Reintentar</string>
     <string name="error">Error cargando datos</string>
@@ -41,11 +42,27 @@
     <string name="about_news_english">• Motorsport (inglés):</string>
     <string name="about_news_spanish">• Motorsport (español):</string>
 
+    <string name="schedule">Horario</string>
+    <string name="season_results">Resultados Temporada</string>
     <string name="calendar">Calendario</string>
     <string name="calendar_title">Calendario %s</string>
+    <string name="races_title">Carreras %s</string>
 
     <string name="complication_next_race">Próxima Carrera</string>
     <string name="complication_championship">Campeonato</string>
+    <string name="complication_driver">Posición Piloto</string>
+    <string name="set_complication">Poner en esfera</string>
+    <string name="complication_set_done">Listo!</string>
+
+    <string name="reaction_game">Lights Out!</string>
+    <string name="reaction_title">Lights Out!</string>
+    <string name="reaction_tap_start">Toca para iniciar</string>
+    <string name="reaction_wait">Espera…</string>
+    <string name="reaction_go">YA!</string>
+    <string name="reaction_jump_start">Salida en falso!</string>
+    <string name="reaction_tap_retry">Toca para reintentar</string>
+    <string name="reaction_best">Mejor:</string>
+    <string name="replay_lap">Vuelta</string>
 
     <string name="tile_next_race">Próxima Carrera</string>
     <string name="tile_standings">Clasificación Pilotos</string>

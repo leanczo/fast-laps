@@ -2,11 +2,14 @@ package com.example.fastlaps.presentation.complication
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.graphics.drawable.Icon
 import androidx.wear.watchface.complications.data.ComplicationData
 import androidx.wear.watchface.complications.data.ComplicationType
 import androidx.wear.watchface.complications.data.LongTextComplicationData
+import androidx.wear.watchface.complications.data.MonochromaticImage
 import androidx.wear.watchface.complications.data.PlainComplicationText
 import androidx.wear.watchface.complications.data.ShortTextComplicationData
+import com.leandro.fastlaps.R
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
 import com.example.fastlaps.presentation.MainActivity
@@ -19,6 +22,10 @@ import java.util.Calendar
 class NextRaceComplicationService : SuspendingComplicationDataSourceService() {
 
     private val repository = DriverStandingsRepository()
+
+    private fun complicationIcon() = MonochromaticImage.Builder(
+        Icon.createWithResource(this, R.drawable.ic_complication_flag)
+    ).build()
 
     override suspend fun onComplicationRequest(
         request: ComplicationRequest
@@ -57,6 +64,7 @@ class NextRaceComplicationService : SuspendingComplicationDataSourceService() {
                         contentDescription = PlainComplicationText.Builder("$name $countdownLong").build()
                     )
                         .setTitle(PlainComplicationText.Builder(shortName).build())
+                        .setMonochromaticImage(complicationIcon())
                         .setTapAction(tapAction)
                         .build()
 
@@ -65,6 +73,7 @@ class NextRaceComplicationService : SuspendingComplicationDataSourceService() {
                         contentDescription = PlainComplicationText.Builder("Next race: $name $countdownLong").build()
                     )
                         .setTitle(PlainComplicationText.Builder("Next Race").build())
+                        .setMonochromaticImage(complicationIcon())
                         .setTapAction(tapAction)
                         .build()
 

@@ -25,7 +25,17 @@ data class Race(
     val Sprint: SessionTime? = null,
     val Results: List<RaceResult> = emptyList(),
     val QualifyingResults: List<QualifyingResult> = emptyList(),
-    val SprintResults: List<RaceResult> = emptyList()
+    val SprintResults: List<RaceResult> = emptyList(),
+    val PitStops: List<PitStop> = emptyList(),
+    val Laps: List<Lap> = emptyList()
+)
+
+data class PitStop(
+    val driverId: String = "",
+    val lap: String = "",
+    val stop: String = "",
+    val time: String = "",
+    val duration: String = ""
 )
 
 data class SessionTime(
@@ -70,6 +80,17 @@ data class FastestLap(
 )
 
 data class LapTime(
+    val time: String = ""
+)
+
+data class Lap(
+    val number: String = "",
+    val Timings: List<LapTiming> = emptyList()
+)
+
+data class LapTiming(
+    val driverId: String = "",
+    val position: String = "",
     val time: String = ""
 )
 

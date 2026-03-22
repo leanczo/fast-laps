@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PilotsScreen(
     viewModel: RaceViewModel,
+    onDriverClick: (driverId: String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -111,6 +112,7 @@ fun PilotsScreen(
                             val driver = driverStandings[index]
                             DriverStandingItem(
                                 driver = driver,
+                                onClick = { onDriverClick(driver.Driver.driverId) },
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                             )
                         }

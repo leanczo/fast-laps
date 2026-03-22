@@ -2,26 +2,29 @@ package com.example.fastlaps.presentation.presentation.component
 
 import QualifyingResult
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Card
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import com.example.fastlaps.presentation.util.F1Constants
 
 @Composable
 fun QualifyingPositionItem(
@@ -32,24 +35,10 @@ fun QualifyingPositionItem(
         "1" -> Color(0xFFFFD700)
         "2" -> Color(0xFFC0C0C0)
         "3" -> Color(0xFFCD7F32)
-        else -> MaterialTheme.colors.primary
+        else -> Color.White
     }
 
-    fun getTeamColor(constructorId: String): Color {
-        return when (constructorId.lowercase()) {
-            "mclaren" -> Color(0xFFF47600)
-            "red_bull" -> Color(0xFF4781D7)
-            "mercedes" -> Color(0xFF00D7B6)
-            "ferrari" -> Color(0xFFED1131)
-            "aston_martin" -> Color(0xFF229971)
-            "alpine" -> Color(0xFF00A1E8)
-            "williams" -> Color(0xFF1868DB)
-            "haas" -> Color(0xFF9C9FA2)
-            "rb" -> Color(0xFF6C98FF)
-            "sauber" -> Color(0xFF01C00E)
-            else -> Color.Gray
-        }
-    }
+    val teamColor = F1Constants.teamColor(result.Constructor.constructorId)
 
     val bestTime = when {
         result.Q3.isNotEmpty() -> result.Q3
@@ -58,58 +47,80 @@ fun QualifyingPositionItem(
         else -> ""
     }
 
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        contentColor = MaterialTheme.colors.onSurface,
-        onClick = { }
+    val qLabel = when {
+        result.Q3.isNotEmpty() -> "Q3"
+        result.Q2.isNotEmpty() -> "Q2"
+        else -> "Q1"
+    }
+
+    val shape = RoundedCornerShape(10.dp)
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
+            .clip(shape)
+            .background(Color(0xFF1A1A1A))
+            .border(1.dp, Color(0xFF333333), shape),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
+        // Team color bar
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(2.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .width(4.dp)
+                .fillMaxHeight()
+                .background(teamColor)
+        )
+
+        // Position number
+        Text(
+            text = result.position,
+            style = MaterialTheme.typography.body1,
+            fontWeight = FontWeight.Bold,
+            color = positionColor,
+            modifier = Modifier.padding(start = 10.dp, end = 6.dp)
+        )
+
+        // Driver info
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(1.dp)
         ) {
             Text(
-                text = "#${result.position}",
-                style = MaterialTheme.typography.body1,
+                text = result.Driver.familyName,
+                style = MaterialTheme.typography.body2,
                 fontWeight = FontWeight.Bold,
-                color = positionColor
+                color = Color.White,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
+            Text(
+                text = result.Constructor.name,
+                style = MaterialTheme.typography.caption2,
+                color = Color.White.copy(alpha = 0.5f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
 
+        // Lap time
+        if (bestTime.isNotEmpty()) {
             Column(
-                modifier = Modifier.weight(1f).padding(start = 8.dp),
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier.padding(end = 10.dp)
             ) {
-                Text(
-                    text = "${result.Driver.givenName} ${result.Driver.familyName}",
-                    style = MaterialTheme.typography.body2,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .clip(CircleShape)
-                            .background(getTeamColor(result.Constructor.constructorId))
-                    )
-                    Text(
-                        text = result.Constructor.name,
-                        style = MaterialTheme.typography.caption2,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-
-            if (bestTime.isNotEmpty()) {
                 Text(
                     text = bestTime,
                     style = MaterialTheme.typography.caption2,
-                    textAlign = TextAlign.End
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Text(
+                    text = qLabel,
+                    style = MaterialTheme.typography.caption2,
+                    color = Color.White.copy(alpha = 0.4f)
                 )
             }
         }

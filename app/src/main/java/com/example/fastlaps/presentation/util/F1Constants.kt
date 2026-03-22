@@ -1,8 +1,112 @@
 package com.example.fastlaps.presentation.util
 
 import androidx.compose.ui.graphics.Color
+import com.leandro.fastlaps.R
 
 object F1Constants {
+
+    fun circuitDrawable(circuitId: String): Int {
+        return when (circuitId) {
+            "albert_park" -> R.drawable.circuit_albert_park
+            "shanghai" -> R.drawable.circuit_shanghai
+            "suzuka" -> R.drawable.circuit_suzuka
+            "bahrain" -> R.drawable.circuit_bahrain
+            "jeddah" -> R.drawable.circuit_jeddah
+            "miami" -> R.drawable.circuit_miami
+            "imola" -> R.drawable.circuit_imola
+            "monaco" -> R.drawable.circuit_monaco
+            "catalunya" -> R.drawable.circuit_catalunya
+            "villeneuve" -> R.drawable.circuit_villeneuve
+            "red_bull_ring" -> R.drawable.circuit_red_bull_ring
+            "silverstone" -> R.drawable.circuit_silverstone
+            "spa" -> R.drawable.circuit_spa
+            "hungaroring" -> R.drawable.circuit_hungaroring
+            "zandvoort" -> R.drawable.circuit_zandvoort
+            "monza" -> R.drawable.circuit_monza
+            "baku" -> R.drawable.circuit_baku
+            "marina_bay" -> R.drawable.circuit_marina_bay
+            "americas" -> R.drawable.circuit_americas
+            "rodriguez" -> R.drawable.circuit_rodriguez
+            "interlagos" -> R.drawable.circuit_interlagos
+            "losail" -> R.drawable.circuit_losail
+            "yas_marina" -> R.drawable.circuit_yas_marina
+            "las_vegas" -> R.drawable.circuit_las_vegas
+            else -> 0
+        }
+    }
+
+    fun driverImageUrl(driverId: String): String {
+        val mediaId = driverMediaId(driverId)
+        return "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/${mediaId.first().uppercase()}/${mediaId.uppercase()}_${driverFullName(driverId)}/${mediaId}.png.transform/1col/image.png"
+    }
+
+    private fun driverMediaId(driverId: String): String {
+        return when (driverId) {
+            "max_verstappen" -> "MAXVER01"
+            "norris" -> "LANNOR01"
+            "leclerc" -> "CHALEC01"
+            "piastri" -> "OSCPIA01"
+            "sainz" -> "CARSAI01"
+            "hamilton" -> "LEWHAM01"
+            "russell" -> "GEORUS01"
+            "alonso" -> "FERALO01"
+            "stroll" -> "LANSTR01"
+            "gasly" -> "PIEGAS01"
+            "doohan" -> "JACDOO01"
+            "tsunoda" -> "YUKTSU01"
+            "hadjar" -> "ISAHAD01"
+            "albon" -> "ALEALB01"
+            "colapinto" -> "FRACOL01"
+            "hulkenberg" -> "NICHUL01"
+            "bortoleto" -> "GABBOR01"
+            "bearman" -> "OLIBEA01"
+            "ocon" -> "ESTOCO01"
+            "antonelli" -> "KIMANT01"
+            "lawson" -> "LIALAW01"
+            "perez" -> "SERPER01"
+            "ricciardo" -> "DANRIC01"
+            "bottas" -> "VALBOT01"
+            "zhou" -> "GUAZHO01"
+            "magnussen" -> "KEVMAG01"
+            "sargeant" -> "LOGSAR01"
+            "de_vries" -> "NYKVRI01"
+            else -> ""
+        }
+    }
+
+    private fun driverFullName(driverId: String): String {
+        return when (driverId) {
+            "max_verstappen" -> "Max_Verstappen"
+            "norris" -> "Lando_Norris"
+            "leclerc" -> "Charles_Leclerc"
+            "piastri" -> "Oscar_Piastri"
+            "sainz" -> "Carlos_Sainz"
+            "hamilton" -> "Lewis_Hamilton"
+            "russell" -> "George_Russell"
+            "alonso" -> "Fernando_Alonso"
+            "stroll" -> "Lance_Stroll"
+            "gasly" -> "Pierre_Gasly"
+            "doohan" -> "Jack_Doohan"
+            "tsunoda" -> "Yuki_Tsunoda"
+            "hadjar" -> "Isack_Hadjar"
+            "albon" -> "Alexander_Albon"
+            "colapinto" -> "Franco_Colapinto"
+            "hulkenberg" -> "Nico_Hulkenberg"
+            "bortoleto" -> "Gabriel_Bortoleto"
+            "bearman" -> "Oliver_Bearman"
+            "ocon" -> "Esteban_Ocon"
+            "antonelli" -> "Kimi_Antonelli"
+            "lawson" -> "Liam_Lawson"
+            "perez" -> "Sergio_Perez"
+            "ricciardo" -> "Daniel_Ricciardo"
+            "bottas" -> "Valtteri_Bottas"
+            "zhou" -> "Guanyu_Zhou"
+            "magnussen" -> "Kevin_Magnussen"
+            "sargeant" -> "Logan_Sargeant"
+            "de_vries" -> "Nyck_De_Vries"
+            else -> ""
+        }
+    }
 
     fun countryFlag(country: String): String {
         return when (country) {

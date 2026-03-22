@@ -1,3 +1,4 @@
+import com.example.fastlaps.presentation.presentation.component.ConstructorStandingItem
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +33,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ConstructorsScreen(
     viewModel: RaceViewModel,
+    onConstructorClick: (constructorId: String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -114,7 +116,8 @@ fun ConstructorsScreen(
                             items(standings.size) { index ->
                                 val standing = standings[index]
                                 ConstructorStandingItem(
-                                    standing,
+                                    standing = standing,
+                                    onClick = { onConstructorClick(standing.Constructor.constructorId) },
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                                 )
                             }
