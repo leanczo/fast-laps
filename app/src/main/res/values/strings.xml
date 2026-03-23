@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Fast Laps</string>
-    <string name="app_version">v4.0</string>
+    <string name="app_version">v5.1</string>
     <string name="copyright">© 2025 Leandro Cardozo</string>
 
     <string name="races">Races</string>
@@ -62,7 +62,49 @@
     <string name="reaction_jump_start">Jump Start!</string>
     <string name="reaction_tap_retry">Tap to retry</string>
     <string name="reaction_best">Best:</string>
+    <string name="reaction_record">Record:</string>
+    <string name="reaction_clear_record">Clear record</string>
     <string name="replay_lap">Lap</string>
+
+    <string name="games">Games</string>
+    <string name="games_title">F1 Games</string>
+
+    <string name="pit_stop_title">Pit Stop!</string>
+    <string name="pit_stop_tap_start">Tap to start</string>
+    <string name="pit_stop_go">GO!</string>
+    <string name="pit_stop_best">Best:</string>
+    <string name="pit_stop_record">Record:</string>
+    <string name="pit_stop_clear_record">Clear record</string>
+    <string name="pit_stop_tap_retry">Tap to retry</string>
+
+    <string name="trivia_title">F1 Trivia</string>
+    <string name="trivia_tap_start">Tap to start</string>
+    <string name="trivia_best">Best:</string>
+    <string name="trivia_record">Record:</string>
+    <string name="trivia_clear_record">Clear record</string>
+    <string name="trivia_tap_retry">Tap to play again</string>
+    <string name="trivia_correct">Correct!</string>
+    <string name="trivia_wrong">Wrong!</string>
+    <string name="trivia_no_data">Play requires race data</string>
+
+    <string name="circuit_guess_title">Guess the Circuit</string>
+    <string name="circuit_guess_tap_start">Tap to start</string>
+    <string name="circuit_guess_best">Best:</string>
+    <string name="circuit_guess_record">Record:</string>
+    <string name="circuit_guess_clear_record">Clear record</string>
+    <string name="circuit_guess_tap_retry">Tap to play again</string>
+
+    <string name="championship_evolution">Evolution</string>
+
+    <string name="settings">Settings</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_notification_time">Alert before</string>
+    <string name="settings_minutes_before">%d min</string>
+    <string name="settings_favorite_driver">Favorite Driver</string>
+    <string name="settings_no_driver">Not set</string>
+    <string name="settings_notifications">Session alerts</string>
+
+    <string name="donate">Donate</string>
 
     <string name="tile_next_race">Next Race</string>
     <string name="tile_standings">Driver Standings</string>

@@ -6,6 +6,7 @@ import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.wear.protolayout.ActionBuilders
 import androidx.wear.protolayout.ColorBuilders.argb
 import androidx.wear.protolayout.DeviceParametersBuilders
+import androidx.wear.protolayout.DimensionBuilders
 import androidx.wear.protolayout.LayoutElementBuilders
 import androidx.wear.protolayout.ModifiersBuilders
 import androidx.wear.protolayout.ResourceBuilders
@@ -64,11 +65,23 @@ class NextRaceTileService : TileService() {
         requestParams: RequestBuilders.ResourcesRequest
     ): ListenableFuture<ResourceBuilders.Resources> {
         return CallbackToFutureAdapter.getFuture { completer ->
-            completer.set(
-                ResourceBuilders.Resources.Builder()
-                    .setVersion("1")
-                    .build()
-            )
+            val resourcesBuilder = ResourceBuilders.Resources.Builder()
+                .setVersion("2")
+
+            F1Constants.allCircuitDrawables().forEach { (id, drawableRes) ->
+                resourcesBuilder.addIdToImageMapping(
+                    "circuit_$id",
+                    ResourceBuilders.ImageResource.Builder()
+                        .setAndroidResourceByResId(
+                            ResourceBuilders.AndroidImageResourceByResId.Builder()
+                                .setResourceId(drawableRes)
+                                .build()
+                        )
+                        .build()
+                )
+            }
+
+            completer.set(resourcesBuilder.build())
             "NextRaceTileResources"
         }
     }
@@ -119,6 +132,40 @@ class NextRaceTileService : TileService() {
             )
             .build()
 
+        val circuitId = race.Circuit.circuitId
+        val circuitRes = F1Constants.circuitDrawable(circuitId)
+
+        val contentColumn = LayoutElementBuilders.Column.Builder()
+            .setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
+
+        if (circuitRes != 0) {
+            contentColumn.addContent(
+                LayoutElementBuilders.Image.Builder()
+                    .setResourceId("circuit_$circuitId")
+                    .setWidth(DimensionBuilders.DpProp.Builder(50f).build())
+                    .setHeight(DimensionBuilders.DpProp.Builder(50f).build())
+                    .setContentScaleMode(LayoutElementBuilders.CONTENT_SCALE_MODE_FIT)
+                    .build()
+            )
+            contentColumn.addContent(
+                LayoutElementBuilders.Spacer.Builder()
+                    .setHeight(DimensionBuilders.DpProp.Builder(4f).build())
+                    .build()
+            )
+        }
+
+        contentColumn.addContent(
+            Text.Builder(this, "$flag $name")
+                .setTypography(Typography.TYPOGRAPHY_TITLE3)
+                .setColor(argb(0xFFFFFFFF.toInt()))
+                .setModifiers(
+                    ModifiersBuilders.Modifiers.Builder()
+                        .setClickable(clickable)
+                        .build()
+                )
+                .build()
+        )
+
         return PrimaryLayout.Builder(deviceParams)
             .setPrimaryLabelTextContent(
                 Text.Builder(this, topLabel)
@@ -126,17 +173,7 @@ class NextRaceTileService : TileService() {
                     .setColor(argb(0xFFAAAAAA.toInt()))
                     .build()
             )
-            .setContent(
-                Text.Builder(this, "$flag $name")
-                    .setTypography(Typography.TYPOGRAPHY_TITLE3)
-                    .setColor(argb(0xFFFFFFFF.toInt()))
-                    .setModifiers(
-                        ModifiersBuilders.Modifiers.Builder()
-                            .setClickable(clickable)
-                            .build()
-                    )
-                    .build()
-            )
+            .setContent(contentColumn.build())
             .setSecondaryLabelTextContent(
                 Text.Builder(this, countdownText)
                     .setTypography(Typography.TYPOGRAPHY_BODY1)
@@ -207,7 +244,7 @@ class NextRaceTileService : TileService() {
 
     private fun wrapInTile(layout: LayoutElementBuilders.LayoutElement): TileBuilders.Tile {
         return TileBuilders.Tile.Builder()
-            .setResourcesVersion("1")
+            .setResourcesVersion("2")
             .setTileTimeline(
                 TimelineBuilders.Timeline.Builder()
                     .addTimelineEntry(

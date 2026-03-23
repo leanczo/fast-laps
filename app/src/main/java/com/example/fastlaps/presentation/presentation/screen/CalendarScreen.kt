@@ -51,6 +51,7 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import com.example.fastlaps.presentation.presentation.component.YearSelector
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import com.example.fastlaps.presentation.util.F1Constants
 import com.leandro.fastlaps.R
@@ -71,6 +72,7 @@ fun CalendarScreen(
     val races by viewModel.races.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorState by viewModel.errorState.collectAsState()
+    val selectedYear by viewModel.selectedYear.collectAsState()
 
     val today = LocalDate.now()
     val nextRace = races.firstOrNull {
@@ -120,15 +122,12 @@ fun CalendarScreen(
                         .focusRequester(focusRequester)
                         .focusable()
                 ) {
-                    // Title
+                    // Year selector
                     item {
-                        Text(
-                            text = stringResource(R.string.races_title, season),
-                            style = MaterialTheme.typography.body2,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 4.dp)
+                        YearSelector(
+                            selectedYear = selectedYear,
+                            currentYear = viewModel.currentYear,
+                            onYearChange = { viewModel.setSelectedYear(it) }
                         )
                     }
 

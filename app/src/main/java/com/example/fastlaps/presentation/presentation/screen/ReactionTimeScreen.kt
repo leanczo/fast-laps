@@ -1,5 +1,6 @@
 package com.example.fastlaps.presentation.presentation.screen
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,11 +53,14 @@ enum class GameState {
 
 @Composable
 fun ReactionTimeScreen(onBack: () -> Unit) {
+    val context = LocalContext.current
+    val prefs = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
+
     val gameState = remember { mutableStateOf(GameState.READY) }
     val lightsOn = remember { mutableIntStateOf(0) }
     val goTime = remember { mutableLongStateOf(0L) }
     val reactionMs = remember { mutableLongStateOf(0L) }
-    val bestTime = remember { mutableLongStateOf(0L) }
+    val bestTime = remember { mutableLongStateOf(prefs.getLong("best_reaction_time", 0L)) }
 
     // Lights sequence
     LaunchedEffect(gameState.value) {
@@ -98,6 +103,7 @@ fun ReactionTimeScreen(onBack: () -> Unit) {
                             reactionMs.longValue = System.currentTimeMillis() - goTime.longValue
                             if (bestTime.longValue == 0L || reactionMs.longValue < bestTime.longValue) {
                                 bestTime.longValue = reactionMs.longValue
+                                prefs.edit().putLong("best_reaction_time", reactionMs.longValue).apply()
                             }
                             gameState.value = GameState.RESULT
                         }
@@ -122,6 +128,33 @@ fun ReactionTimeScreen(onBack: () -> Unit) {
                         Spacer(modifier = Modifier.height(8.dp))
                         LightsRow(count = 0)
                         Spacer(modifier = Modifier.height(8.dp))
+                        if (bestTime.longValue > 0) {
+                            val shape = RoundedCornerShape(8.dp)
+                            Text(
+                                text = "${stringResource(R.string.reaction_record)} ${bestTime.longValue}ms",
+                                style = MaterialTheme.typography.caption2,
+                                color = Color(0xFF4CAF50),
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .clip(shape)
+                                    .background(Color(0xFF1A1A1A))
+                                    .border(1.dp, Color(0xFF333333), shape)
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = stringResource(R.string.reaction_clear_record),
+                                style = MaterialTheme.typography.caption2,
+                                color = Color(0xFFEF5350).copy(alpha = 0.7f),
+                                modifier = Modifier
+                                    .clickable {
+                                        bestTime.longValue = 0L
+                                        prefs.edit().remove("best_reaction_time").apply()
+                                    }
+                                    .padding(4.dp)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
                         Text(
                             text = stringResource(R.string.reaction_tap_start),
                             style = MaterialTheme.typography.caption2,

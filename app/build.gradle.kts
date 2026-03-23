@@ -12,8 +12,8 @@ android {
         applicationId = "com.leandro.fastlaps"
         minSdk = 30
         targetSdk = 35
-        versionCode = 15
-        versionName = "4.0"
+        versionCode = 17
+        versionName = "5.1"
         wearAppUnbundled=true
     }
 

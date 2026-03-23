@@ -10,6 +10,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.fastlaps.presentation.presentation.screen.AboutScreen
 import com.example.fastlaps.presentation.presentation.screen.CalendarScreen
+import com.example.fastlaps.presentation.presentation.screen.ChampionshipEvolutionScreen
+import com.example.fastlaps.presentation.presentation.screen.CircuitGuessScreen
+import com.example.fastlaps.presentation.presentation.screen.GamesScreen
+import com.example.fastlaps.presentation.presentation.screen.PitStopGameScreen
+import com.example.fastlaps.presentation.presentation.screen.TriviaGameScreen
 import com.example.fastlaps.presentation.presentation.screen.ConstructorDetailScreen
 import com.example.fastlaps.presentation.presentation.screen.DriverDetailScreen
 import com.example.fastlaps.presentation.presentation.screen.FastestLapsScreen
@@ -19,6 +24,7 @@ import com.example.fastlaps.presentation.presentation.screen.ReactionTimeScreen
 import com.example.fastlaps.presentation.presentation.screen.HeadToHeadScreen
 import com.example.fastlaps.presentation.presentation.screen.RaceDetailScreen
 import com.example.fastlaps.presentation.presentation.screen.SessionResultsScreen
+import com.example.fastlaps.presentation.presentation.screen.SettingsScreen
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 
 @Composable
@@ -36,9 +42,18 @@ fun AppNavigation(viewModel: RaceViewModel, currentLang: String, onLanguageChang
                 onConstructorsClick = { navController.navigate("constructors") },
                 onNewsClick = { navController.navigate("news") },
                 onFastestLapsClick = { navController.navigate("fastestLaps") },
-                onReactionGameClick = { navController.navigate("reactionTime") },
+                onEvolutionClick = { navController.navigate("evolution") },
+                onGamesClick = { navController.navigate("games") },
+                onSettingsClick = { navController.navigate("settings") }
+            )
+        }
+
+        composable("settings") {
+            SettingsScreen(
+                viewModel = viewModel,
                 currentLang = currentLang,
-                onLanguageChange = onLanguageChange
+                onLanguageChange = onLanguageChange,
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -58,12 +73,44 @@ fun AppNavigation(viewModel: RaceViewModel, currentLang: String, onLanguageChang
             )
         }
 
+        composable("games") {
+            GamesScreen(
+                onReactionClick = { navController.navigate("reactionTime") },
+                onPitStopClick = { navController.navigate("pitStopGame") },
+                onTriviaClick = { navController.navigate("triviaGame") },
+                onCircuitGuessClick = { navController.navigate("circuitGuessGame") },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
         composable("reactionTime") {
             ReactionTimeScreen(onBack = { navController.popBackStack() })
         }
 
+        composable("pitStopGame") {
+            PitStopGameScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable("triviaGame") {
+            TriviaGameScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("circuitGuessGame") {
+            CircuitGuessScreen(onBack = { navController.popBackStack() })
+        }
+
         composable("fastestLaps") {
             FastestLapsScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("evolution") {
+            ChampionshipEvolutionScreen(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() }
             )

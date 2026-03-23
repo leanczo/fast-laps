@@ -5,35 +5,38 @@ import com.leandro.fastlaps.R
 
 object F1Constants {
 
-    fun circuitDrawable(circuitId: String): Int {
-        return when (circuitId) {
-            "albert_park" -> R.drawable.circuit_albert_park
-            "shanghai" -> R.drawable.circuit_shanghai
-            "suzuka" -> R.drawable.circuit_suzuka
-            "bahrain" -> R.drawable.circuit_bahrain
-            "jeddah" -> R.drawable.circuit_jeddah
-            "miami" -> R.drawable.circuit_miami
-            "imola" -> R.drawable.circuit_imola
-            "monaco" -> R.drawable.circuit_monaco
-            "catalunya" -> R.drawable.circuit_catalunya
-            "villeneuve" -> R.drawable.circuit_villeneuve
-            "red_bull_ring" -> R.drawable.circuit_red_bull_ring
-            "silverstone" -> R.drawable.circuit_silverstone
-            "spa" -> R.drawable.circuit_spa
-            "hungaroring" -> R.drawable.circuit_hungaroring
-            "zandvoort" -> R.drawable.circuit_zandvoort
-            "monza" -> R.drawable.circuit_monza
-            "baku" -> R.drawable.circuit_baku
-            "marina_bay" -> R.drawable.circuit_marina_bay
-            "americas" -> R.drawable.circuit_americas
-            "rodriguez" -> R.drawable.circuit_rodriguez
-            "interlagos" -> R.drawable.circuit_interlagos
-            "losail" -> R.drawable.circuit_losail
-            "yas_marina" -> R.drawable.circuit_yas_marina
-            "las_vegas" -> R.drawable.circuit_las_vegas
-            else -> 0
-        }
-    }
+    private val circuitDrawableMap = mapOf(
+        "albert_park" to R.drawable.circuit_albert_park,
+        "shanghai" to R.drawable.circuit_shanghai,
+        "suzuka" to R.drawable.circuit_suzuka,
+        "bahrain" to R.drawable.circuit_bahrain,
+        "jeddah" to R.drawable.circuit_jeddah,
+        "miami" to R.drawable.circuit_miami,
+        "imola" to R.drawable.circuit_imola,
+        "monaco" to R.drawable.circuit_monaco,
+        "catalunya" to R.drawable.circuit_catalunya,
+        "madring" to R.drawable.circuit_madring,
+        "villeneuve" to R.drawable.circuit_villeneuve,
+        "red_bull_ring" to R.drawable.circuit_red_bull_ring,
+        "silverstone" to R.drawable.circuit_silverstone,
+        "spa" to R.drawable.circuit_spa,
+        "hungaroring" to R.drawable.circuit_hungaroring,
+        "zandvoort" to R.drawable.circuit_zandvoort,
+        "monza" to R.drawable.circuit_monza,
+        "baku" to R.drawable.circuit_baku,
+        "marina_bay" to R.drawable.circuit_marina_bay,
+        "americas" to R.drawable.circuit_americas,
+        "rodriguez" to R.drawable.circuit_rodriguez,
+        "interlagos" to R.drawable.circuit_interlagos,
+        "losail" to R.drawable.circuit_losail,
+        "yas_marina" to R.drawable.circuit_yas_marina,
+        "las_vegas" to R.drawable.circuit_las_vegas,
+        "vegas" to R.drawable.circuit_las_vegas
+    )
+
+    fun circuitDrawable(circuitId: String): Int = circuitDrawableMap[circuitId] ?: 0
+
+    fun allCircuitDrawables(): Map<String, Int> = circuitDrawableMap
 
     fun driverImageUrl(driverId: String): String {
         val mediaId = driverMediaId(driverId)

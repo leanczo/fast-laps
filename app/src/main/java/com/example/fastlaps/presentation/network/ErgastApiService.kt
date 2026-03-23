@@ -5,6 +5,7 @@ import DriverStandingsResponse
 import RaceTableResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ErgastApiService {
     @GET("f1/{year}/driverStandings.json")
@@ -42,9 +43,11 @@ interface ErgastApiService {
         @Path("driverId") driverId: String
     ): RaceTableResponse
 
-    @GET("f1/{year}/results.json?limit=500")
+    @GET("f1/{year}/results.json")
     suspend fun getAllSeasonResults(
-        @Path("year") year: Int
+        @Path("year") year: Int,
+        @Query("limit") limit: Int = 100,
+        @Query("offset") offset: Int = 0
     ): RaceTableResponse
 
     @GET("f1/{year}/{round}/laps/{lap}.json")

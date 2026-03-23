@@ -66,8 +66,30 @@ class DriverStandingsRepository {
     }
 
     suspend fun getAllSeasonResults(year: Int): List<Race> {
-        val response = api.getAllSeasonResults(year)
-        return response.MRData.RaceTable.Races
+        val pageSize = 100
+        var offset = 0
+        val raceMap = mutableMapOf<String, Race>()
+
+        while (true) {
+            val response = api.getAllSeasonResults(year, pageSize, offset)
+            val total = response.MRData.total.toIntOrNull() ?: 0
+
+            response.MRData.RaceTable.Races.forEach { race ->
+                val existing = raceMap[race.round]
+                if (existing != null) {
+                    raceMap[race.round] = existing.copy(
+                        Results = existing.Results + race.Results
+                    )
+                } else {
+                    raceMap[race.round] = race
+                }
+            }
+
+            offset += pageSize
+            if (offset >= total || response.MRData.RaceTable.Races.isEmpty()) break
+        }
+
+        return raceMap.values.sortedBy { it.round.toIntOrNull() ?: 0 }
     }
 
     suspend fun getPitStops(year: Int, round: Int): List<PitStop> {

@@ -23,8 +23,24 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class RaceViewModel() : ViewModel() {
-    private val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+    private val _selectedYear = MutableStateFlow(currentYear)
+    val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
     private val driverStandingsRepository = DriverStandingsRepository()
+
+    fun setSelectedYear(year: Int) {
+        if (_selectedYear.value != year) {
+            _selectedYear.value = year
+            _races.value = emptyList()
+            racesLastFetched = 0L
+            _driverStandings.value = emptyList()
+            driverStandingsLastFetched = 0L
+            _constructorStandings.value = emptyList()
+            constructorStandingsLastFetched = 0L
+            _allSeasonResults.value = emptyList()
+            loadRaces()
+        }
+    }
 
     // Cache timestamps
     private var racesLastFetched = 0L
@@ -118,11 +134,11 @@ class RaceViewModel() : ViewModel() {
             _isLoadingLaps.value = true
             try {
                 val current = withContext(Dispatchers.IO) {
-                    driverStandingsRepository.getSingleLap(currentYear, _replayRound, lap)
+                    driverStandingsRepository.getSingleLap(_selectedYear.value, _replayRound, lap)
                 }
                 val prev = if (lap > 1) {
                     withContext(Dispatchers.IO) {
-                        driverStandingsRepository.getSingleLap(currentYear, _replayRound, lap - 1)
+                        driverStandingsRepository.getSingleLap(_selectedYear.value, _replayRound, lap - 1)
                     }
                 } else null
                 _currentLapData.value = current
@@ -148,7 +164,7 @@ class RaceViewModel() : ViewModel() {
         viewModelScope.launch {
             _isLoadingFastestLaps.value = true
             try {
-                val response = driverStandingsRepository.getAllSeasonResults(currentYear)
+                val response = driverStandingsRepository.getAllSeasonResults(_selectedYear.value)
                 _allSeasonResults.value = response
             } catch (e: Exception) {
                 Log.e("RaceViewModel", "Error loading all season results", e)
@@ -174,7 +190,7 @@ class RaceViewModel() : ViewModel() {
             _isLoading.value = true
             _errorState.value = null
             try {
-                val races = driverStandingsRepository.getRaceSchedule(currentYear)
+                val races = driverStandingsRepository.getRaceSchedule(_selectedYear.value)
                 _races.value = races
                 racesLastFetched = System.currentTimeMillis()
             } catch (e: Exception) {
@@ -200,14 +216,14 @@ class RaceViewModel() : ViewModel() {
             _isLoading.value = true
             _errorState.value = null
             try {
-                val resultsDeferred = async { driverStandingsRepository.getRaceResults(currentYear, round) }
-                val qualifyingDeferred = async { driverStandingsRepository.getQualifyingResults(currentYear, round) }
+                val resultsDeferred = async { driverStandingsRepository.getRaceResults(_selectedYear.value, round) }
+                val qualifyingDeferred = async { driverStandingsRepository.getQualifyingResults(_selectedYear.value, round) }
                 val sprintDeferred = async {
-                    try { driverStandingsRepository.getSprintResults(currentYear, round) }
+                    try { driverStandingsRepository.getSprintResults(_selectedYear.value, round) }
                     catch (_: Exception) { emptyList() }
                 }
                 val pitStopsDeferred = async {
-                    try { driverStandingsRepository.getPitStops(currentYear, round) }
+                    try { driverStandingsRepository.getPitStops(_selectedYear.value, round) }
                     catch (_: Exception) { emptyList() }
                 }
 
@@ -272,7 +288,7 @@ class RaceViewModel() : ViewModel() {
         viewModelScope.launch {
             _isLoadingDriverDetail.value = true
             try {
-                val results = driverStandingsRepository.getDriverSeasonResults(currentYear, driverId)
+                val results = driverStandingsRepository.getDriverSeasonResults(_selectedYear.value, driverId)
                 _driverSeasonResults.value = results
             } catch (e: Exception) {
                 Log.e("RaceViewModel", "Error loading driver results", e)
@@ -299,7 +315,7 @@ class RaceViewModel() : ViewModel() {
             _isLoadingDrivers.value = true
             _driverErrorState.value = null
             try {
-                val response = driverStandingsRepository.getDriverStandings(currentYear)
+                val response = driverStandingsRepository.getDriverStandings(_selectedYear.value)
                 val standings = response.MRData.StandingsTable.StandingsLists
                     .firstOrNull()?.DriverStandings ?: emptyList()
                 _driverStandings.value = standings
@@ -336,8 +352,8 @@ class RaceViewModel() : ViewModel() {
         viewModelScope.launch {
             _isLoadingH2H.value = true
             try {
-                val d1 = async { driverStandingsRepository.getDriverSeasonResults(currentYear, teamDrivers[0].Driver.driverId) }
-                val d2 = async { driverStandingsRepository.getDriverSeasonResults(currentYear, teamDrivers[1].Driver.driverId) }
+                val d1 = async { driverStandingsRepository.getDriverSeasonResults(_selectedYear.value, teamDrivers[0].Driver.driverId) }
+                val d2 = async { driverStandingsRepository.getDriverSeasonResults(_selectedYear.value, teamDrivers[1].Driver.driverId) }
                 _h2hDriver1Results.value = d1.await()
                 _h2hDriver2Results.value = d2.await()
             } catch (e: Exception) {
@@ -370,14 +386,14 @@ class RaceViewModel() : ViewModel() {
             try {
                 // Ensure driver standings are loaded for the drivers section
                 if (_driverStandings.value.isEmpty()) {
-                    val response = driverStandingsRepository.getDriverStandings(currentYear)
+                    val response = driverStandingsRepository.getDriverStandings(_selectedYear.value)
                     _driverStandings.value = response.MRData.StandingsTable.StandingsLists
                         .firstOrNull()?.DriverStandings ?: emptyList()
                 }
                 _constructorDrivers.value = _driverStandings.value.filter {
                     it.Constructors.any { c -> c.constructorId == constructorId }
                 }
-                val results = driverStandingsRepository.getConstructorSeasonResults(currentYear, constructorId)
+                val results = driverStandingsRepository.getConstructorSeasonResults(_selectedYear.value, constructorId)
                 _constructorSeasonResults.value = results
             } catch (e: Exception) {
                 Log.e("RaceViewModel", "Error loading constructor results", e)
@@ -398,13 +414,13 @@ class RaceViewModel() : ViewModel() {
     private val _constructorErrorState = MutableStateFlow<String?>(null)
     val constructorErrorState = _constructorErrorState.asStateFlow()
 
-    fun loadConstructorStandings(year: Int = currentYear, forceRefresh: Boolean = false) {
+    fun loadConstructorStandings(forceRefresh: Boolean = false) {
         if (!forceRefresh && _constructorStandings.value.isNotEmpty() && isCacheValid(constructorStandingsLastFetched, CACHE_STANDINGS_MS)) return
         viewModelScope.launch {
             _isLoadingConstructors.value = true
             _constructorErrorState.value = null
             try {
-                val response = driverStandingsRepository.getConstructorStandings(year)
+                val response = driverStandingsRepository.getConstructorStandings(_selectedYear.value)
                 _constructorStandings.value = response.MRData.StandingsTable.StandingsLists
                     .firstOrNull()?.ConstructorStandings ?: emptyList()
                 constructorStandingsLastFetched = System.currentTimeMillis()

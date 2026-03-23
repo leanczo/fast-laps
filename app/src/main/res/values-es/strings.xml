@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Fast Laps</string>
-    <string name="app_version">v4.0</string>
+    <string name="app_version">v5.1</string>
     <string name="copyright">© 2025 Leandro Cardozo</string>
 
     <string name="races">Carreras</string>
@@ -62,7 +62,49 @@
     <string name="reaction_jump_start">Salida en falso!</string>
     <string name="reaction_tap_retry">Toca para reintentar</string>
     <string name="reaction_best">Mejor:</string>
+    <string name="reaction_record">Récord:</string>
+    <string name="reaction_clear_record">Borrar récord</string>
     <string name="replay_lap">Vuelta</string>
+
+    <string name="games">Juegos</string>
+    <string name="games_title">Juegos F1</string>
+
+    <string name="pit_stop_title">Pit Stop!</string>
+    <string name="pit_stop_tap_start">Toca para iniciar</string>
+    <string name="pit_stop_go">YA!</string>
+    <string name="pit_stop_best">Mejor:</string>
+    <string name="pit_stop_record">Récord:</string>
+    <string name="pit_stop_clear_record">Borrar récord</string>
+    <string name="pit_stop_tap_retry">Toca para reintentar</string>
+
+    <string name="trivia_title">Trivia F1</string>
+    <string name="trivia_tap_start">Toca para iniciar</string>
+    <string name="trivia_best">Mejor:</string>
+    <string name="trivia_record">Récord:</string>
+    <string name="trivia_clear_record">Borrar récord</string>
+    <string name="trivia_tap_retry">Toca para jugar de nuevo</string>
+    <string name="trivia_correct">¡Correcto!</string>
+    <string name="trivia_wrong">¡Incorrecto!</string>
+    <string name="trivia_no_data">Se necesitan datos de carrera</string>
+
+    <string name="circuit_guess_title">Adivina el Circuito</string>
+    <string name="circuit_guess_tap_start">Toca para iniciar</string>
+    <string name="circuit_guess_best">Mejor:</string>
+    <string name="circuit_guess_record">Récord:</string>
+    <string name="circuit_guess_clear_record">Borrar récord</string>
+    <string name="circuit_guess_tap_retry">Toca para jugar de nuevo</string>
+
+    <string name="championship_evolution">Evolución</string>
+
+    <string name="settings">Ajustes</string>
+    <string name="settings_language">Idioma</string>
+    <string name="settings_notification_time">Alerta antes de</string>
+    <string name="settings_minutes_before">%d min</string>
+    <string name="settings_favorite_driver">Piloto Favorito</string>
+    <string name="settings_no_driver">Sin seleccionar</string>
+    <string name="settings_notifications">Alertas de sesión</string>
+
+    <string name="donate">Donar</string>
 
     <string name="tile_next_race">Próxima Carrera</string>
     <string name="tile_standings">Clasificación Pilotos</string>

@@ -3,6 +3,9 @@ data class RaceTableResponse(
 )
 
 data class RaceMRData(
+    val total: String = "0",
+    val limit: String = "30",
+    val offset: String = "0",
     val RaceTable: RaceTable = RaceTable()
 )
 

@@ -25,6 +25,7 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.presentation.component.DriverStandingItem
+import com.example.fastlaps.presentation.presentation.component.YearSelector
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import com.leandro.fastlaps.R
 import kotlinx.coroutines.launch
@@ -39,12 +40,13 @@ fun PilotsScreen(
     val driverStandings by viewModel.driverStandings.collectAsState()
     val isLoading by viewModel.isLoadingDrivers.collectAsState()
     val errorState by viewModel.driverErrorState.collectAsState()
+    val selectedYear by viewModel.selectedYear.collectAsState()
 
     val listState = rememberScalingLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(selectedYear) {
         viewModel.loadDriverStandings()
     }
 
@@ -73,49 +75,56 @@ fun PilotsScreen(
             else -> {
                 LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(R.string.drivers),
-                        style = MaterialTheme.typography.body2,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-                    ScalingLazyColumn(
-                        state = listState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .onRotaryScrollEvent { event ->
-                                coroutineScope.launch { listState.scrollBy(event.verticalScrollPixels) }
-                                true
-                            }
-                            .focusRequester(focusRequester)
-                            .focusable()
-                    ) {
-                        item {
-                            Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                RefreshButton(
-                                    isLoading = isLoading,
-                                    onClick = { viewModel.loadDriverStandings(forceRefresh = true) },
-                                    isErrorState = false
-                                )
-                            }
+                ScalingLazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .onRotaryScrollEvent { event ->
+                            coroutineScope.launch { listState.scrollBy(event.verticalScrollPixels) }
+                            true
                         }
+                        .focusRequester(focusRequester)
+                        .focusable()
+                ) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.drivers),
+                            style = MaterialTheme.typography.body2,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 4.dp)
+                        )
+                    }
 
-                        items(driverStandings.size) { index ->
-                            val driver = driverStandings[index]
-                            DriverStandingItem(
-                                driver = driver,
-                                onClick = { onDriverClick(driver.Driver.driverId) },
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    item {
+                        YearSelector(
+                            selectedYear = selectedYear,
+                            currentYear = viewModel.currentYear,
+                            onYearChange = { viewModel.setSelectedYear(it) }
+                        )
+                    }
+
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            RefreshButton(
+                                isLoading = isLoading,
+                                onClick = { viewModel.loadDriverStandings(forceRefresh = true) },
+                                isErrorState = false
                             )
                         }
+                    }
+
+                    items(driverStandings.size) { index ->
+                        val driver = driverStandings[index]
+                        DriverStandingItem(
+                            driver = driver,
+                            onClick = { onDriverClick(driver.Driver.driverId) },
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
                     }
                 }
             }

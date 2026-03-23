@@ -37,8 +37,9 @@ class SessionNotificationWorker(
             val races = repository.getRaceSchedule(year)
             val now = ZonedDateTime.now(ZoneId.of("UTC"))
             val prefs = applicationContext.getSharedPreferences("notifications", Context.MODE_PRIVATE)
-            val lang = applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
-                .getString("language", "en") ?: "en"
+            val settingsPrefs = applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+            val lang = settingsPrefs.getString("language", "en") ?: "en"
+            val leadTime = settingsPrefs.getInt("notification_lead_time", 15)
 
             for (race in races) {
                 val sessions = listOf(
@@ -56,6 +57,18 @@ class SessionNotificationWorker(
                     val (sessionKey, sessionLabel) = namesPair
                     if (sessionTime == null || sessionTime.date.isEmpty() || sessionTime.time.isEmpty()) continue
 
+                    // Check if this session type is enabled
+                    val notifyKey = when (sessionKey) {
+                        "FP1" -> "notify_fp1"
+                        "FP2" -> "notify_fp2"
+                        "FP3" -> "notify_fp3"
+                        "QUALI" -> "notify_qualifying"
+                        "SPRINT" -> "notify_sprint"
+                        "RACE" -> "notify_race"
+                        else -> null
+                    }
+                    if (notifyKey != null && !settingsPrefs.getBoolean(notifyKey, true)) continue
+
                     val sessionDateTime = try {
                         val date = LocalDate.parse(sessionTime.date)
                         val time = LocalTime.parse(sessionTime.time.removeSuffix("Z"))
@@ -65,8 +78,8 @@ class SessionNotificationWorker(
                     val minutesUntil = Duration.between(now, sessionDateTime).toMinutes()
                     val notifKey = "${race.season}_${race.round}_$sessionKey"
 
-                    // 15 minutes before
-                    if (minutesUntil in 1..16) {
+                    // Configurable minutes before
+                    if (minutesUntil in 1..(leadTime + 1)) {
                         val key15 = "${notifKey}_15min"
                         if (!prefs.getBoolean(key15, false)) {
                             val text = if (lang == "es") {

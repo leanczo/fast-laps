@@ -22,11 +22,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.material.icons.filled.Speed
-import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -56,6 +59,9 @@ import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
+import android.content.Intent
+import androidx.core.net.toUri
+import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import com.example.fastlaps.presentation.util.F1Constants
 import com.leandro.fastlaps.R
@@ -75,11 +81,12 @@ fun MainScreen(
     onNewsClick: () -> Unit,
     onConstructorsClick: () -> Unit,
     onFastestLapsClick: () -> Unit,
-    onReactionGameClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    currentLang: String,
-    onLanguageChange: () -> Unit
+    onEvolutionClick: () -> Unit,
+    onGamesClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val races by viewModel.races.collectAsState()
     val today = LocalDate.now()
     val nextRace = races.firstOrNull {
@@ -90,7 +97,12 @@ fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(Unit) { focusRequester.requestFocus() }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        if (viewModel.selectedYear.value != viewModel.currentYear) {
+            viewModel.setSelectedYear(viewModel.currentYear)
+        }
+    }
 
     Scaffold(modifier = modifier.fillMaxSize()) {
         ScalingLazyColumn(
@@ -186,15 +198,34 @@ fun MainScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     MenuItem(
+                        icon = Icons.Default.TrendingUp,
+                        label = stringResource(R.string.championship_evolution),
+                        accentColor = Color(0xFFFFD700),
+                        onClick = onEvolutionClick
+                    )
+                    MenuItem(
                         icon = Icons.Default.NewReleases,
                         label = stringResource(R.string.news),
                         onClick = onNewsClick
                     )
+                }
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
                     MenuItem(
                         icon = Icons.Default.SportsEsports,
-                        label = stringResource(R.string.reaction_game),
+                        label = stringResource(R.string.games),
                         accentColor = LightGreen,
-                        onClick = onReactionGameClick
+                        onClick = onGamesClick
+                    )
+                    MenuItem(
+                        icon = Icons.Default.Settings,
+                        label = stringResource(R.string.settings),
+                        onClick = onSettingsClick
                     )
                 }
             }
@@ -209,40 +240,22 @@ fun MainScreen(
                         label = stringResource(R.string.about),
                         onClick = onAboutClick
                     )
-                    // Empty spacer to keep alignment
-                    Spacer(modifier = Modifier.width(70.dp))
-                }
-            }
-
-            // Language toggle
-            item {
-                val shape = RoundedCornerShape(10.dp)
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 6.dp)
-                        .clip(shape)
-                        .background(Color(0xFF1A1A1A))
-                        .border(1.dp, Color(0xFF333333), shape)
-                        .clickable(onClick = onLanguageChange)
-                        .padding(horizontal = 12.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.SwapHoriz,
-                        contentDescription = null,
-                        tint = Color.White.copy(alpha = 0.6f),
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "${stringResource(R.string.change_to)} ${
-                            if (currentLang == "en") stringResource(R.string.spanish)
-                            else stringResource(R.string.english)
-                        }",
-                        style = MaterialTheme.typography.caption2,
-                        color = Color.White.copy(alpha = 0.6f)
+                    MenuItem(
+                        icon = Icons.Default.Favorite,
+                        label = stringResource(R.string.donate),
+                        accentColor = Color(0xFFE91E63),
+                        onClick = {
+                            val uri = "https://cafecito.app/leanczo".toUri()
+                            try {
+                                val remoteIntent = Intent(Intent.ACTION_VIEW)
+                                    .addCategory(Intent.CATEGORY_BROWSABLE)
+                                    .setData(uri)
+                                RemoteActivityHelper(context).startRemoteActivity(remoteIntent)
+                            } catch (_: Exception) { }
+                            try {
+                                context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+                            } catch (_: Exception) { }
+                        }
                     )
                 }
             }

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.util.F1Constants
+import kotlin.math.abs
 
 private val F1Purple = Color(0xFF9B26B6)
 
@@ -99,6 +100,12 @@ fun DriverPositionItem(
         else -> Color(0xFFEF5350)
     }
 
+    val gridPos = result.grid.toIntOrNull()
+    val finishPos = result.position.toIntOrNull()
+    val gridChange = if (gridPos != null && finishPos != null && gridPos > 0) {
+        gridPos - finishPos
+    } else null
+
     val shape = RoundedCornerShape(10.dp)
 
     Row(
@@ -151,11 +158,19 @@ fun DriverPositionItem(
             )
         }
 
-        // Status / fastest lap
+        // Status / grid change / fastest lap
         Column(
             horizontalAlignment = Alignment.End,
             modifier = Modifier.padding(end = 10.dp)
         ) {
+            if (gridChange != null && gridChange != 0) {
+                Text(
+                    text = "${if (gridChange > 0) "▲" else "▼"}${abs(gridChange)}",
+                    style = MaterialTheme.typography.caption2,
+                    color = if (gridChange > 0) Color(0xFF4CAF50) else Color(0xFFEF5350),
+                    fontWeight = FontWeight.Bold
+                )
+            }
             if (!isFinished) {
                 Text(
                     text = statusText,

@@ -44,6 +44,7 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
+import com.example.fastlaps.presentation.presentation.component.YearSelector
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import com.example.fastlaps.presentation.util.F1Constants
 import com.leandro.fastlaps.R
@@ -73,8 +74,9 @@ fun FastestLapsScreen(
     // Compute fastest laps from loaded race data
     val allResults by viewModel.allSeasonResults.collectAsState()
     val isLoadingFL by viewModel.isLoadingFastestLaps.collectAsState()
+    val selectedYear by viewModel.selectedYear.collectAsState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(selectedYear) {
         viewModel.loadAllSeasonResults()
     }
 
@@ -151,7 +153,15 @@ fun FastestLapsScreen(
                         )
                     }
 
-                    if (entries.isEmpty()) {
+                    item {
+                        YearSelector(
+                            selectedYear = selectedYear,
+                            currentYear = viewModel.currentYear,
+                            onYearChange = { viewModel.setSelectedYear(it) }
+                        )
+                    }
+
+                    if (entries.isEmpty() && !isLoadingFL) {
                         item {
                             Text(
                                 text = stringResource(R.string.no_data),
