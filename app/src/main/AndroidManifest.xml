@@ -45,6 +45,7 @@
         <service
             android:name="com.example.fastlaps.presentation.complication.NextRaceComplicationService"
             android:exported="true"
+            android:icon="@drawable/ic_complication_flag"
             android:label="@string/complication_next_race"
             android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER"
             tools:ignore="MissingClass">
@@ -53,7 +54,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.wearable.complications.SUPPORTED_TYPES"
-                android:value="SHORT_TEXT,LONG_TEXT,ICON" />
+                android:value="SHORT_TEXT,LONG_TEXT,MONOCHROMATIC_IMAGE" />
             <meta-data
                 android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
                 android:value="3600" />
@@ -62,6 +63,7 @@
         <service
             android:name="com.example.fastlaps.presentation.complication.ChampionshipComplicationService"
             android:exported="true"
+            android:icon="@drawable/ic_complication_trophy"
             android:label="@string/complication_championship"
             android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER"
             tools:ignore="MissingClass">
@@ -70,7 +72,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.wearable.complications.SUPPORTED_TYPES"
-                android:value="SHORT_TEXT,LONG_TEXT,ICON" />
+                android:value="SHORT_TEXT,LONG_TEXT,MONOCHROMATIC_IMAGE" />
             <meta-data
                 android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
                 android:value="3600" />
@@ -79,6 +81,7 @@
         <service
             android:name="com.example.fastlaps.presentation.complication.DriverComplicationService"
             android:exported="true"
+            android:icon="@drawable/ic_complication_driver"
             android:label="@string/complication_driver"
             android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER"
             tools:ignore="MissingClass">
@@ -87,7 +90,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.wearable.complications.SUPPORTED_TYPES"
-                android:value="SHORT_TEXT,LONG_TEXT,ICON" />
+                android:value="SHORT_TEXT,LONG_TEXT,MONOCHROMATIC_IMAGE" />
             <meta-data
                 android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
                 android:value="3600" />

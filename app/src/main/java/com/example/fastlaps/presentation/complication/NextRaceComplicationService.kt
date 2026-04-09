@@ -7,6 +7,7 @@ import androidx.wear.watchface.complications.data.ComplicationData
 import androidx.wear.watchface.complications.data.ComplicationType
 import androidx.wear.watchface.complications.data.LongTextComplicationData
 import androidx.wear.watchface.complications.data.MonochromaticImage
+import androidx.wear.watchface.complications.data.MonochromaticImageComplicationData
 import androidx.wear.watchface.complications.data.PlainComplicationText
 import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import com.leandro.fastlaps.R
@@ -77,6 +78,13 @@ class NextRaceComplicationService : SuspendingComplicationDataSourceService() {
                         .setTapAction(tapAction)
                         .build()
 
+                    ComplicationType.MONOCHROMATIC_IMAGE -> MonochromaticImageComplicationData.Builder(
+                        monochromaticImage = complicationIcon(),
+                        contentDescription = PlainComplicationText.Builder("$name $countdownLong").build()
+                    )
+                        .setTapAction(tapAction)
+                        .build()
+
                     else -> null
                 }
             } else {
@@ -94,6 +102,7 @@ class NextRaceComplicationService : SuspendingComplicationDataSourceService() {
                 contentDescription = PlainComplicationText.Builder("Australia in 3 days").build()
             )
                 .setTitle(PlainComplicationText.Builder("AUS").build())
+                .setMonochromaticImage(complicationIcon())
                 .build()
 
             ComplicationType.LONG_TEXT -> LongTextComplicationData.Builder(
@@ -101,7 +110,13 @@ class NextRaceComplicationService : SuspendingComplicationDataSourceService() {
                 contentDescription = PlainComplicationText.Builder("Next race").build()
             )
                 .setTitle(PlainComplicationText.Builder("Next Race").build())
+                .setMonochromaticImage(complicationIcon())
                 .build()
+
+            ComplicationType.MONOCHROMATIC_IMAGE -> MonochromaticImageComplicationData.Builder(
+                monochromaticImage = complicationIcon(),
+                contentDescription = PlainComplicationText.Builder("Next race: Australia in 3 days").build()
+            ).build()
 
             else -> null
         }
@@ -125,6 +140,13 @@ class NextRaceComplicationService : SuspendingComplicationDataSourceService() {
                 contentDescription = PlainComplicationText.Builder("No upcoming races").build()
             )
                 .setTitle(PlainComplicationText.Builder("Next Race").build())
+                .setTapAction(tapAction)
+                .build()
+
+            ComplicationType.MONOCHROMATIC_IMAGE -> MonochromaticImageComplicationData.Builder(
+                monochromaticImage = complicationIcon(),
+                contentDescription = PlainComplicationText.Builder("No upcoming races").build()
+            )
                 .setTapAction(tapAction)
                 .build()
 

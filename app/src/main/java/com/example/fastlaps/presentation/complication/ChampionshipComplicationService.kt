@@ -7,6 +7,7 @@ import androidx.wear.watchface.complications.data.ComplicationData
 import androidx.wear.watchface.complications.data.ComplicationType
 import androidx.wear.watchface.complications.data.LongTextComplicationData
 import androidx.wear.watchface.complications.data.MonochromaticImage
+import androidx.wear.watchface.complications.data.MonochromaticImageComplicationData
 import androidx.wear.watchface.complications.data.PlainComplicationText
 import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
@@ -59,6 +60,13 @@ class ChampionshipComplicationService : SuspendingComplicationDataSourceService(
                         .setTapAction(tapAction)
                         .build()
 
+                    ComplicationType.MONOCHROMATIC_IMAGE -> MonochromaticImageComplicationData.Builder(
+                        monochromaticImage = complicationIcon(),
+                        contentDescription = PlainComplicationText.Builder("$fullName P1 $points points").build()
+                    )
+                        .setTapAction(tapAction)
+                        .build()
+
                     else -> null
                 }
             } else {
@@ -76,6 +84,7 @@ class ChampionshipComplicationService : SuspendingComplicationDataSourceService(
                 contentDescription = PlainComplicationText.Builder("Verstappen P1").build()
             )
                 .setTitle(PlainComplicationText.Builder("VER P1").build())
+                .setMonochromaticImage(complicationIcon())
                 .build()
 
             ComplicationType.LONG_TEXT -> LongTextComplicationData.Builder(
@@ -83,7 +92,13 @@ class ChampionshipComplicationService : SuspendingComplicationDataSourceService(
                 contentDescription = PlainComplicationText.Builder("Championship leader").build()
             )
                 .setTitle(PlainComplicationText.Builder("Championship").build())
+                .setMonochromaticImage(complicationIcon())
                 .build()
+
+            ComplicationType.MONOCHROMATIC_IMAGE -> MonochromaticImageComplicationData.Builder(
+                monochromaticImage = complicationIcon(),
+                contentDescription = PlainComplicationText.Builder("Championship leader").build()
+            ).build()
 
             else -> null
         }
@@ -107,6 +122,13 @@ class ChampionshipComplicationService : SuspendingComplicationDataSourceService(
                 contentDescription = PlainComplicationText.Builder("No data").build()
             )
                 .setTitle(PlainComplicationText.Builder("Championship").build())
+                .setTapAction(tapAction)
+                .build()
+
+            ComplicationType.MONOCHROMATIC_IMAGE -> MonochromaticImageComplicationData.Builder(
+                monochromaticImage = complicationIcon(),
+                contentDescription = PlainComplicationText.Builder("No data").build()
+            )
                 .setTapAction(tapAction)
                 .build()
 
