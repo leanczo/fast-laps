@@ -57,6 +57,10 @@ import com.example.fastlaps.presentation.util.F1Constants
 import com.leandro.fastlaps.R
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
@@ -74,9 +78,19 @@ fun CalendarScreen(
     val errorState by viewModel.errorState.collectAsState()
     val selectedYear by viewModel.selectedYear.collectAsState()
 
-    val today = LocalDate.now()
-    val nextRace = races.firstOrNull {
-        try { LocalDate.parse(it.date) >= today } catch (_: Exception) { false }
+    val now = OffsetDateTime.now(ZoneOffset.UTC)
+    val today = now.toLocalDate()
+    val nextRace = races.firstOrNull { race ->
+        try {
+            val raceDate = LocalDate.parse(race.date)
+            when {
+                raceDate > today -> true
+                raceDate == today && race.time.isNotEmpty() ->
+                    LocalDateTime.of(raceDate, LocalTime.parse(race.time.trimEnd('Z')))
+                        .atOffset(ZoneOffset.UTC).isAfter(now)
+                else -> false
+            }
+        } catch (_: Exception) { false }
     }
 
     val listState = rememberScalingLazyListState()
@@ -155,7 +169,14 @@ fun CalendarScreen(
                         ) {
                             rowRaces.forEach { race ->
                                 val isPast = try {
-                                    LocalDate.parse(race.date) < today
+                                    val raceDate = LocalDate.parse(race.date)
+                                    when {
+                                        raceDate < today -> true
+                                        raceDate == today && race.time.isNotEmpty() ->
+                                            LocalDateTime.of(raceDate, LocalTime.parse(race.time.trimEnd('Z')))
+                                                .atOffset(ZoneOffset.UTC).isBefore(now)
+                                        else -> false
+                                    }
                                 } catch (_: Exception) { false }
                                 val isNext = race == nextRace
 

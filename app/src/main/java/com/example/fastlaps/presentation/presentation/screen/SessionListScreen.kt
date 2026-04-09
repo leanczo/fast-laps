@@ -33,6 +33,10 @@ import com.example.fastlaps.presentation.util.F1Constants
 import com.leandro.fastlaps.R
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 @Composable
 fun SessionListScreen(
@@ -44,8 +48,20 @@ fun SessionListScreen(
     val errorState by viewModel.errorState.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    val today = LocalDate.now().toString()
-    val pastRaces = races.filter { it.date <= today }
+    val now = OffsetDateTime.now(ZoneOffset.UTC)
+    val today = now.toLocalDate()
+    val pastRaces = races.filter { race ->
+        try {
+            val raceDate = LocalDate.parse(race.date)
+            when {
+                raceDate < today -> true
+                raceDate == today && race.time.isNotEmpty() ->
+                    LocalDateTime.of(raceDate, LocalTime.parse(race.time.trimEnd('Z')))
+                        .atOffset(ZoneOffset.UTC).isBefore(now)
+                else -> false
+            }
+        } catch (_: Exception) { race.date <= today.toString() }
+    }
 
     val listState = rememberScalingLazyListState()
     val coroutineScope = rememberCoroutineScope()
