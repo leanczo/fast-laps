@@ -54,6 +54,7 @@ import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.presentation.component.YearSelector
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
 import com.example.fastlaps.presentation.util.F1Constants
+import com.example.fastlaps.presentation.util.hasWeekendStarted
 import com.leandro.fastlaps.R
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -168,16 +169,7 @@ fun CalendarScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
                         ) {
                             rowRaces.forEach { race ->
-                                val isPast = try {
-                                    val raceDate = LocalDate.parse(race.date)
-                                    when {
-                                        raceDate < today -> true
-                                        raceDate == today && race.time.isNotEmpty() ->
-                                            LocalDateTime.of(raceDate, LocalTime.parse(race.time.trimEnd('Z')))
-                                                .atOffset(ZoneOffset.UTC).isBefore(now)
-                                        else -> false
-                                    }
-                                } catch (_: Exception) { false }
+                                val isPast = race.hasWeekendStarted(now)
                                 val isNext = race == nextRace
 
                                 CircuitGridItem(

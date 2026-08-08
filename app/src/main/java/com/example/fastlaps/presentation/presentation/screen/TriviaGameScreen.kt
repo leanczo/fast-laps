@@ -3,7 +3,6 @@ package com.example.fastlaps.presentation.presentation.screen
 import LoadingIndicator
 import Race
 import DriverStanding
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -45,6 +44,8 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import com.example.fastlaps.presentation.presentation.viewmodel.RaceViewModel
+import com.example.fastlaps.presentation.util.GameScoreKeys
+import com.example.fastlaps.presentation.util.GameScoreStore
 import com.leandro.fastlaps.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -57,7 +58,7 @@ private data class TriviaQuestion(
     val correctIndex: Int
 )
 
-private enum class TriviaState { LOADING, READY, QUESTION, FEEDBACK, RESULT }
+private enum class TriviaState { LOADING, ERROR, READY, QUESTION, FEEDBACK, RESULT }
 
 @Composable
 fun TriviaGameScreen(
@@ -65,7 +66,6 @@ fun TriviaGameScreen(
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
-    val prefs = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
 
     val allResults by viewModel.allSeasonResults.collectAsState()
     val standings by viewModel.driverStandings.collectAsState()
@@ -78,22 +78,25 @@ fun TriviaGameScreen(
     val currentQ = remember { mutableIntStateOf(0) }
     val score = remember { mutableIntStateOf(0) }
     val selectedOption = remember { mutableIntStateOf(-1) }
-    val bestScore = remember { mutableIntStateOf(prefs.getInt("best_trivia_score", 0)) }
+    val bestScore = remember { mutableIntStateOf(GameScoreStore.getBestInt(context, GameScoreKeys.TRIVIA_SCORE)) }
 
     val listState = rememberScalingLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
+        viewModel.loadRaces()
         viewModel.loadAllSeasonResults()
         viewModel.loadDriverStandings()
     }
 
-    // Transition from LOADING to READY when data arrives
+    // Transition from LOADING to READY (or ERROR if nothing came back) when data arrives
     LaunchedEffect(allResults, standings, isLoadingResults, isLoadingDrivers) {
         if (gameState.value == TriviaState.LOADING && !isLoadingResults && !isLoadingDrivers) {
-            if (allResults.isNotEmpty() || standings.isNotEmpty()) {
-                gameState.value = TriviaState.READY
+            gameState.value = if (allResults.isNotEmpty() || standings.isNotEmpty()) {
+                TriviaState.READY
+            } else {
+                TriviaState.ERROR
             }
         }
     }
@@ -106,7 +109,7 @@ fun TriviaGameScreen(
             if (next >= questions.value.size) {
                 if (score.intValue > bestScore.intValue) {
                     bestScore.intValue = score.intValue
-                    prefs.edit().putInt("best_trivia_score", score.intValue).apply()
+                    GameScoreStore.saveBestInt(context, GameScoreKeys.TRIVIA_SCORE, score.intValue)
                 }
                 gameState.value = TriviaState.RESULT
             } else {
@@ -136,6 +139,36 @@ fun TriviaGameScreen(
                 }
             }
 
+            TriviaState.ERROR -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable {
+                            gameState.value = TriviaState.LOADING
+                            viewModel.loadRaces()
+                            viewModel.loadAllSeasonResults()
+                            viewModel.loadDriverStandings()
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = stringResource(R.string.trivia_no_data),
+                            style = MaterialTheme.typography.caption1,
+                            color = Color(0xFFEF5350),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = stringResource(R.string.retry),
+                            style = MaterialTheme.typography.caption2,
+                            color = Color.White.copy(alpha = 0.5f)
+                        )
+                    }
+                }
+            }
+
             TriviaState.READY -> {
                 Box(
                     modifier = Modifier
@@ -155,7 +188,7 @@ fun TriviaGameScreen(
                         if (bestScore.intValue > 0) {
                             val shape = RoundedCornerShape(8.dp)
                             Text(
-                                text = "${stringResource(R.string.trivia_record)} ${bestScore.intValue}/10",
+                                text = "${stringResource(R.string.trivia_record)} ${bestScore.intValue}",
                                 style = MaterialTheme.typography.caption2,
                                 color = Color(0xFF4CAF50),
                                 fontWeight = FontWeight.Bold,
@@ -173,7 +206,7 @@ fun TriviaGameScreen(
                                 modifier = Modifier
                                     .clickable {
                                         bestScore.intValue = 0
-                                        prefs.edit().remove("best_trivia_score").apply()
+                                        GameScoreStore.clear(context, GameScoreKeys.TRIVIA_SCORE)
                                     }
                                     .padding(4.dp)
                             )
@@ -286,7 +319,7 @@ fun TriviaGameScreen(
                         )
                         if (bestScore.intValue > 0) {
                             Text(
-                                text = "${stringResource(R.string.trivia_best)} ${bestScore.intValue}/10",
+                                text = "${stringResource(R.string.trivia_best)} ${bestScore.intValue}",
                                 style = MaterialTheme.typography.caption2,
                                 color = Color.White.copy(alpha = 0.4f)
                             )

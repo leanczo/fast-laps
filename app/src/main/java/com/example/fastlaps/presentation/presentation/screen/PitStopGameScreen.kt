@@ -1,9 +1,10 @@
 package com.example.fastlaps.presentation.presentation.screen
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,18 +14,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,8 +41,11 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
+import com.example.fastlaps.presentation.util.GameScoreKeys
+import com.example.fastlaps.presentation.util.GameScoreStore
 import com.leandro.fastlaps.R
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private val TireOff = Color(0xFF2A2A2A)
 private val TireActive = Color(0xFFFF9800)
@@ -46,7 +56,6 @@ private enum class PitStopState { READY, COUNTDOWN, PLAYING, RESULT }
 @Composable
 fun PitStopGameScreen(onBack: () -> Unit) {
     val context = LocalContext.current
-    val prefs = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
 
     val gameState = remember { mutableStateOf(PitStopState.READY) }
     val countdownText = remember { mutableStateOf("") }
@@ -55,7 +64,14 @@ fun PitStopGameScreen(onBack: () -> Unit) {
     val tireStates = remember { mutableStateOf(listOf(0, 0, 0, 0)) } // 0=off, 1=active, 2=done
     val startTime = remember { mutableLongStateOf(0L) }
     val totalTime = remember { mutableLongStateOf(0L) }
-    val bestTime = remember { mutableLongStateOf(prefs.getLong("best_pit_stop_time", 0L)) }
+    val bestTime = remember { mutableLongStateOf(GameScoreStore.getBestLong(context, GameScoreKeys.PIT_STOP_TIME)) }
+
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
+    val goText = stringResource(R.string.pit_stop_go)
 
     // Countdown sequence
     LaunchedEffect(gameState.value) {
@@ -64,7 +80,7 @@ fun PitStopGameScreen(onBack: () -> Unit) {
                 countdownText.value = "$n"
                 delay(800)
             }
-            countdownText.value = stringResource(context, R.string.pit_stop_go)
+            countdownText.value = goText
             delay(400)
             // Start game
             tireOrder.value = listOf(0, 1, 2, 3).shuffled()
@@ -96,7 +112,7 @@ fun PitStopGameScreen(onBack: () -> Unit) {
             totalTime.longValue = System.currentTimeMillis() - startTime.longValue
             if (bestTime.longValue == 0L || totalTime.longValue < bestTime.longValue) {
                 bestTime.longValue = totalTime.longValue
-                prefs.edit().putLong("best_pit_stop_time", totalTime.longValue).apply()
+                GameScoreStore.saveBestLong(context, GameScoreKeys.PIT_STOP_TIME, totalTime.longValue)
             }
             gameState.value = PitStopState.RESULT
         } else {
@@ -112,6 +128,12 @@ fun PitStopGameScreen(onBack: () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .onRotaryScrollEvent { event ->
+                    coroutineScope.launch { scrollState.scrollBy(event.verticalScrollPixels) }
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable()
                 .then(
                     if (gameState.value == PitStopState.READY || gameState.value == PitStopState.RESULT) {
                         Modifier.clickable {
@@ -122,9 +144,11 @@ fun PitStopGameScreen(onBack: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Column(
+                modifier = Modifier
+                    .verticalScroll(scrollState)
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(16.dp)
+                verticalArrangement = Arrangement.Center
             ) {
                 when (gameState.value) {
                     PitStopState.READY -> {
@@ -159,7 +183,7 @@ fun PitStopGameScreen(onBack: () -> Unit) {
                                 modifier = Modifier
                                     .clickable {
                                         bestTime.longValue = 0L
-                                        prefs.edit().remove("best_pit_stop_time").apply()
+                                        GameScoreStore.clear(context, GameScoreKeys.PIT_STOP_TIME)
                                     }
                                     .padding(4.dp)
                             )
@@ -207,11 +231,11 @@ fun PitStopGameScreen(onBack: () -> Unit) {
                             else -> Color(0xFFEF5350)
                         }
                         val rating = when {
-                            ms < 1500 -> "World Record!"
-                            ms < 2000 -> "Red Bull Speed!"
-                            ms < 2500 -> "Great Stop"
-                            ms < 3500 -> "Average"
-                            else -> "Slow Stop"
+                            ms < 1500 -> stringResource(R.string.pit_stop_rating_world_record)
+                            ms < 2000 -> stringResource(R.string.pit_stop_rating_red_bull_speed)
+                            ms < 2500 -> stringResource(R.string.pit_stop_rating_great)
+                            ms < 3500 -> stringResource(R.string.pit_stop_rating_average)
+                            else -> stringResource(R.string.pit_stop_rating_slow)
                         }
 
                         Text(
@@ -290,8 +314,4 @@ private fun formatTime(ms: Long): String {
     val seconds = ms / 1000
     val millis = ms % 1000
     return "${seconds}.${millis.toString().padStart(3, '0')}s"
-}
-
-private fun stringResource(context: Context, resId: Int): String {
-    return context.getString(resId)
 }

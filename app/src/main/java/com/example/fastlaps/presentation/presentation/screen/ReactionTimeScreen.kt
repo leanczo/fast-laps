@@ -1,31 +1,37 @@
 package com.example.fastlaps.presentation.presentation.screen
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,8 +41,11 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
+import com.example.fastlaps.presentation.util.GameScoreKeys
+import com.example.fastlaps.presentation.util.GameScoreStore
 import com.leandro.fastlaps.R
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private val LightOff = Color(0xFF2A2A2A)
 private val LightRed = Color(0xFFCC0000)
@@ -54,13 +63,17 @@ enum class GameState {
 @Composable
 fun ReactionTimeScreen(onBack: () -> Unit) {
     val context = LocalContext.current
-    val prefs = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
 
     val gameState = remember { mutableStateOf(GameState.READY) }
     val lightsOn = remember { mutableIntStateOf(0) }
     val goTime = remember { mutableLongStateOf(0L) }
     val reactionMs = remember { mutableLongStateOf(0L) }
-    val bestTime = remember { mutableLongStateOf(prefs.getLong("best_reaction_time", 0L)) }
+    val bestTime = remember { mutableLongStateOf(GameScoreStore.getBestLong(context, GameScoreKeys.REACTION_TIME)) }
+
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
     // Lights sequence
     LaunchedEffect(gameState.value) {
@@ -91,6 +104,12 @@ fun ReactionTimeScreen(onBack: () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .onRotaryScrollEvent { event ->
+                    coroutineScope.launch { scrollState.scrollBy(event.verticalScrollPixels) }
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable()
                 .clickable {
                     when (gameState.value) {
                         GameState.READY, GameState.RESULT, GameState.JUMP_START -> {
@@ -103,7 +122,7 @@ fun ReactionTimeScreen(onBack: () -> Unit) {
                             reactionMs.longValue = System.currentTimeMillis() - goTime.longValue
                             if (bestTime.longValue == 0L || reactionMs.longValue < bestTime.longValue) {
                                 bestTime.longValue = reactionMs.longValue
-                                prefs.edit().putLong("best_reaction_time", reactionMs.longValue).apply()
+                                GameScoreStore.saveBestLong(context, GameScoreKeys.REACTION_TIME, reactionMs.longValue)
                             }
                             gameState.value = GameState.RESULT
                         }
@@ -112,9 +131,11 @@ fun ReactionTimeScreen(onBack: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Column(
+                modifier = Modifier
+                    .verticalScroll(scrollState)
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(16.dp)
+                verticalArrangement = Arrangement.Center
             ) {
                 when (gameState.value) {
                     GameState.READY -> {
@@ -149,7 +170,7 @@ fun ReactionTimeScreen(onBack: () -> Unit) {
                                 modifier = Modifier
                                     .clickable {
                                         bestTime.longValue = 0L
-                                        prefs.edit().remove("best_reaction_time").apply()
+                                        GameScoreStore.clear(context, GameScoreKeys.REACTION_TIME)
                                     }
                                     .padding(4.dp)
                             )
@@ -195,11 +216,11 @@ fun ReactionTimeScreen(onBack: () -> Unit) {
                             else -> LightRed
                         }
                         val rating = when {
-                            ms < 150 -> "Incredible!"
-                            ms < 200 -> "Great!"
-                            ms < 250 -> "Good"
-                            ms < 350 -> "Average"
-                            else -> "Slow"
+                            ms < 150 -> stringResource(R.string.reaction_rating_incredible)
+                            ms < 200 -> stringResource(R.string.reaction_rating_great)
+                            ms < 250 -> stringResource(R.string.reaction_rating_good)
+                            ms < 350 -> stringResource(R.string.reaction_rating_average)
+                            else -> stringResource(R.string.reaction_rating_slow)
                         }
 
                         Text(

@@ -64,6 +64,11 @@
     <string name="reaction_best">Best:</string>
     <string name="reaction_record">Record:</string>
     <string name="reaction_clear_record">Clear record</string>
+    <string name="reaction_rating_incredible">Incredible!</string>
+    <string name="reaction_rating_great">Great!</string>
+    <string name="reaction_rating_good">Good</string>
+    <string name="reaction_rating_average">Average</string>
+    <string name="reaction_rating_slow">Slow</string>
     <string name="replay_lap">Lap</string>
 
     <string name="games">Games</string>
@@ -76,6 +81,11 @@
     <string name="pit_stop_record">Record:</string>
     <string name="pit_stop_clear_record">Clear record</string>
     <string name="pit_stop_tap_retry">Tap to retry</string>
+    <string name="pit_stop_rating_world_record">World Record!</string>
+    <string name="pit_stop_rating_red_bull_speed">Red Bull Speed!</string>
+    <string name="pit_stop_rating_great">Great Stop</string>
+    <string name="pit_stop_rating_average">Average</string>
+    <string name="pit_stop_rating_slow">Slow Stop</string>
 
     <string name="trivia_title">F1 Trivia</string>
     <string name="trivia_tap_start">Tap to start</string>

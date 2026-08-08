@@ -64,6 +64,11 @@
     <string name="reaction_best">Mejor:</string>
     <string name="reaction_record">Récord:</string>
     <string name="reaction_clear_record">Borrar récord</string>
+    <string name="reaction_rating_incredible">¡Increíble!</string>
+    <string name="reaction_rating_great">¡Genial!</string>
+    <string name="reaction_rating_good">Bueno</string>
+    <string name="reaction_rating_average">Promedio</string>
+    <string name="reaction_rating_slow">Lento</string>
     <string name="replay_lap">Vuelta</string>
 
     <string name="games">Juegos</string>
@@ -76,6 +81,11 @@
     <string name="pit_stop_record">Récord:</string>
     <string name="pit_stop_clear_record">Borrar récord</string>
     <string name="pit_stop_tap_retry">Toca para reintentar</string>
+    <string name="pit_stop_rating_world_record">¡Récord mundial!</string>
+    <string name="pit_stop_rating_red_bull_speed">¡Velocidad Red Bull!</string>
+    <string name="pit_stop_rating_great">Gran parada</string>
+    <string name="pit_stop_rating_average">Promedio</string>
+    <string name="pit_stop_rating_slow">Parada lenta</string>
 
     <string name="trivia_title">Trivia F1</string>
     <string name="trivia_tap_start">Toca para iniciar</string>
